@@ -1,0 +1,13 @@
+[user]
+	name = Mars9553
+	email = 168501046+Mars9553@users.noreply.github.com
+[safe]
+	directory = C:/Windows/System32
+	directory = C:/Windows/System32
+[filter "lfs"]
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+[gui]
+	recentrepo = D:/git

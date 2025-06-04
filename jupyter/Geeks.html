@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+<title>Geeks.java</title>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<style type="text/css">
+<!--
+body {color: #000000; background-color: #ffffff; font-family: Monospaced}
+pre {color: #000000; background-color: #ffffff; font-family: Monospaced}
+table {color: #000000; background-color: #e9e8e2; font-family: Monospaced}
+.ST0 {font-family: Monospaced; font-weight: bold}
+.comment {color: #969696}
+.ST1 {font-family: Monospaced; font-weight: bold; font-style: italic}
+.ST2 {color: #009900; font-family: Monospaced; font-style: italic}
+.ST3 {font-family: Monospaced; font-style: italic}
+.literal {color: #0000e6}
+.string {color: #ce7b00}
+-->
+</style>
+</head>
+<body>
+<table width="100%"><tr><td align="center">C:\Users\hp\Documents\NetBeansProjects\Guess\src\guess\Geeks.java</td></tr></table>
+<pre>
+ 1 <span class="comment">// Java Program to demonstrates the Number guessing game</span>
+ 2 <span class="literal">import</span> java.util.Scanner;
+ 3 
+ 4 <span class="literal">public</span> <span class="literal">class</span> <span class="ST0">Geeks</span> {
+ 5     
+ 6     <span class="literal">public</span> <span class="literal">static</span> <span class="literal">void</span> <span class="ST1">guessingNumberGame</span>()
+ 7     {
+ 8         <span class="comment">// Generate a random number between 1 and 100</span>
+ 9         <span class="literal">try</span> (Scanner sc = <span class="literal">new</span> Scanner(System.<span class="ST2">in</span>)) {
+10             <span class="comment">// Generate a random number between 1 and 100</span>
+11             <span class="literal">int</span> number = 1 + (<span class="literal">int</span>)(100 * Math.<span class="ST3">random</span>());
+12             
+13             <span class="comment">// Number of attempts</span>
+14             <span class="literal">int</span> K = 5;
+15             
+16             System.<span class="ST2">out</span>.println(
+17                     <span class="string">&quot;</span><span class="string">A number is chosen between 1 and 100.</span><span class="string">&quot;</span>);
+18             System.<span class="ST2">out</span>.println(
+19                     <span class="string">&quot;</span><span class="string">You have </span><span class="string">&quot;</span> + K
+20                             + <span class="string">&quot;</span><span class="string"> attempts to guess the correct number.</span><span class="string">&quot;</span>);
+21             
+22             <span class="comment">// Loop for K attempts</span>
+23             <span class="literal">for</span> (<span class="literal">int</span> i = 0; i &lt; K; i++) {
+24                 System.<span class="ST2">out</span>.print(<span class="string">&quot;</span><span class="string">Enter your guess: </span><span class="string">&quot;</span>);
+25                 <span class="literal">int</span> guess = sc.nextInt();
+26                 
+27                 <span class="comment">// Check conditions</span>
+28                 <span class="literal">if</span> (guess == number) {
+29                     System.<span class="ST2">out</span>.println(
+30                             <span class="string">&quot;</span><span class="string"> Congratulations! You guessed the correct number.</span><span class="string">&quot;</span>);
+31                     sc.close();
+32                     
+33                     <span class="comment">// Exit function if guessed correctly</span>
+34                     <span class="literal">return</span>;
+35                 }
+36                 <span class="literal">else</span> <span class="literal">if</span> (guess &lt; number) {
+37                     System.<span class="ST2">out</span>.println(
+38                             <span class="string">&quot;</span><span class="string"> The number is greater than </span><span class="string">&quot;</span> + guess);
+39                 }
+40                 <span class="literal">else</span> {
+41                     System.<span class="ST2">out</span>.println(
+42                             <span class="string">&quot;</span><span class="string"> The number is less than </span><span class="string">&quot;</span> + guess);
+43                 }
+44             }
+45             
+46             <span class="comment">// If the user runs out of attempts</span>
+47             System.<span class="ST2">out</span>.println(
+48                     <span class="string">&quot;</span><span class="string">You&#39;ve exhausted all attempts. The correct number was: </span><span class="string">&quot;</span>
+49                             + number);
+50         }
+51     }
+52 
+53     <span class="literal">public</span> <span class="literal">static</span> <span class="literal">void</span> <span class="ST1">main</span>(String[] args)
+54     {
+55         <span class="ST3">guessingNumberGame</span>();
+56     }
+57 }
+58 
+</pre></body>
+</html>
