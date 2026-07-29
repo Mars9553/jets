@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <circle cx="512" cy="512" r="512" fill="#4A90D9"/>
+  <path d="M280,380 L280,520 Q280,570 330,570 L690,570 Q740,570 740,520 L740,380 Z" fill="white" opacity="0.9"/>
+  <ellipse cx="512" cy="395" rx="230" ry="45" fill="white" opacity="0.9"/>
+  <circle cx="512" cy="555" r="35" fill="white" opacity="0.9"/>
+  <text x="512" y="490" text-anchor="middle" font-size="300" font-weight="bold" fill="#4A90D9" font-family="Arial, sans-serif">EB</text>
+</svg>
