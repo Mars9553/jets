@@ -19,7 +19,16 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
       .then((raw) => {
-        if (raw) setUserState(JSON.parse(raw));
+        if (raw) {
+          try {
+            setUserState(JSON.parse(raw));
+          } catch {
+            // ignore corrupted stored user data
+          }
+        }
+      })
+      .catch(() => {
+        // ignore storage errors (e.g. private browsing / unavailable storage)
       })
       .finally(() => setLoading(false));
   }, []);
