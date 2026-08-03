@@ -15,9 +15,11 @@ function getApiUrl(): string {
     return process.env.EXPO_PUBLIC_API_URL;
   }
 
+  if (typeof window !== 'undefined' && window.location.origin) {
+    return window.location.origin;
+  }
+
   if (__DEV__ && Platform.OS !== 'web') {
-    // expo-constants exposes the Metro bundler host, e.g. "192.168.1.5:8081"
-    // Strip the Metro port and replace with the API server port
     const metroHost =
       Constants.expoConfig?.hostUri?.split(':')[0] ??
       (Constants.manifest as any)?.debuggerHost?.split(':')[0];
