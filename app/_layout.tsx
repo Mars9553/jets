@@ -1,6 +1,7 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
+import { Platform } from 'react-native';
 import { UserProvider, useUser } from '@/context/UserContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { registerForNotificationsAsync } from '@/lib/notifications';

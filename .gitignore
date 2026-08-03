@@ -5,7 +5,6 @@ node_modules/
 
 # Expo
 .expo/
-dist/
 web-build/
 expo-env.d.ts
 
@@ -51,3 +50,5 @@ app.json
 mongo_service
 setup_tables.sql
 test_hashes.js
+
+.vercel
