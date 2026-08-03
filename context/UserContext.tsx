@@ -17,8 +17,11 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
+
     AsyncStorage.getItem(STORAGE_KEY)
       .then((raw) => {
+        if (!isMounted) return;
         if (raw) {
           try {
             setUserState(JSON.parse(raw));
@@ -30,7 +33,18 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
       .catch(() => {
         // ignore storage errors (e.g. private browsing / unavailable storage)
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    const timeout = setTimeout(() => {
+      if (isMounted) setLoading(false);
+    }, 3000);
+
+    return () => {
+      isMounted = false;
+      clearTimeout(timeout);
+    };
   }, []);
 
   const setUser = async (next: BoardUser | null) => {
