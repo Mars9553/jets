@@ -3,9 +3,8 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   SafeAreaView,
-  Platform,
+  ScrollView,
   StatusBar,
   TouchableOpacity,
   useWindowDimensions,
@@ -23,12 +22,14 @@ import { useLikeToggle } from '@/hooks/useLikeToggle';
 import { api, EventItem } from '@/lib/api';
 import { getStatusLabel } from '@/data/events';
 import { useUser } from '@/context/UserContext';
-import { AppColors, Layout, Radius, Shadow, Spacing } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
+import { Layout, Radius, Shadow, Spacing } from '@/constants/theme';
 
 export default function EventDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user } = useUser();
+  const { colors, resolvedTheme } = useTheme();
   const { width } = useWindowDimensions();
   const isWide = width >= 768;
 
@@ -66,26 +67,28 @@ export default function EventDetailScreen() {
   const { likes, liked, loading: likeLoading, toggleLike } = useLikeToggle(
     'event',
     id ?? '',
-    { likes: event?.likes ?? 0, liked: false }
+    { likes: event?.likes ?? 0, liked: event?.liked ?? false }
   );
+
+  const s = styles(colors);
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
         <BoardNavbar />
-        <ActivityIndicator style={styles.loader} color={AppColors.primary} />
+        <ActivityIndicator style={s.loader} color={colors.primary} />
       </SafeAreaView>
     );
   }
 
   if (!event) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
         <BoardNavbar />
-        <View style={styles.notFound}>
-          <Text style={styles.notFoundTitle}>Event not found</Text>
+        <View style={s.notFound}>
+          <Text style={[s.notFoundTitle, { color: colors.textSecondary }]}>Event not found</Text>
           <TouchableOpacity onPress={() => router.replace('/event_page')}>
-            <Text style={styles.backLink}>← Back to events</Text>
+            <Text style={[s.backLink, { color: colors.primary }]}>← Back to events</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -96,19 +99,19 @@ export default function EventDetailScreen() {
   const isPast = event.status === 'past';
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={AppColors.surface} />
+    <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle={resolvedTheme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.surface} />
       <BoardNavbar />
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.page}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
-            <ArrowLeft size={16} color={AppColors.primary} />
-            <Text style={styles.backLink}>Back to events</Text>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scrollContent}>
+        <View style={s.page}>
+          <TouchableOpacity style={s.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+            <ArrowLeft size={16} color={colors.primary} />
+            <Text style={[s.backLink, { color: colors.primary }]}>Back to events</Text>
           </TouchableOpacity>
 
-          <Text style={styles.title}>{event.title}</Text>
-          <Text style={styles.description}>{event.description}</Text>
+          <Text style={[s.title, { color: colors.text }]}>{event.title}</Text>
+          <Text style={[s.description, { color: colors.textMuted }]}>{event.description}</Text>
 
           <EngagementBar
             targetType="event"
@@ -120,14 +123,14 @@ export default function EventDetailScreen() {
             onToggleLike={toggleLike}
           />
 
-          <View style={[styles.mainSection, isWide && styles.mainSectionWide]}>
-            <View style={[styles.gallery, isWide && styles.galleryWide]}>
-              <View style={[styles.galleryRow, isWide && styles.galleryRowWide]}>
+          <View style={[s.mainSection, isWide && s.mainSectionWide]}>
+            <View style={[s.gallery, isWide && s.galleryWide]}>
+              <View style={[s.galleryRow, isWide && s.galleryRowWide]}>
                 {(event.gallery ?? []).map((uri) => (
                   <Image
                     key={uri}
                     source={{ uri }}
-                    style={[styles.galleryImage, isWide && styles.galleryImageWide]}
+                    style={[s.galleryImage, isWide && s.galleryImageWide]}
                     contentFit="cover"
                     transition={200}
                   />
@@ -135,52 +138,52 @@ export default function EventDetailScreen() {
               </View>
             </View>
 
-            <View style={[styles.sidebar, isWide && styles.sidebarWide]}>
-              <Text style={styles.sidebarTitle}>Highlights</Text>
+            <View style={[s.sidebar, isWide && s.sidebarWide, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}>
+              <Text style={[s.sidebarTitle, { color: colors.textSecondary }]}>Highlights</Text>
               {(event.highlights ?? []).map((item) => (
-                <View key={item} style={styles.highlightRow}>
-                  <Sparkles size={14} color={AppColors.primary} />
-                  <Text style={styles.highlightText}>{item}</Text>
+                <View key={item} style={s.highlightRow}>
+                  <Sparkles size={14} color={colors.primary} />
+                  <Text style={[s.highlightText, { color: colors.textMuted }]}>{item}</Text>
                 </View>
               ))}
 
-              <View style={styles.divider} />
+              <View style={[s.divider, { backgroundColor: colors.borderLight }]} />
 
-              <Text style={styles.sidebarTitle}>Event Details</Text>
+              <Text style={[s.sidebarTitle, { color: colors.textSecondary }]}>Event Details</Text>
 
-              <View style={styles.detailRow}>
-                <Calendar size={16} color={AppColors.primary} />
+              <View style={s.detailRow}>
+                <Calendar size={16} color={colors.primary} />
                 <View>
-                  <Text style={styles.detailLabel}>Date</Text>
-                  <Text style={styles.detailValue}>{event.date}</Text>
+                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Date</Text>
+                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.date}</Text>
                 </View>
               </View>
 
-              <View style={styles.detailRow}>
-                <Clock size={16} color={AppColors.primary} />
+              <View style={s.detailRow}>
+                <Clock size={16} color={colors.primary} />
                 <View>
-                  <Text style={styles.detailLabel}>Time</Text>
-                  <Text style={styles.detailValue}>{event.time}</Text>
+                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Time</Text>
+                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.time}</Text>
                 </View>
               </View>
 
-              <View style={styles.detailRow}>
-                <MapPin size={16} color={AppColors.primary} />
+              <View style={s.detailRow}>
+                <MapPin size={16} color={colors.primary} />
                 <View>
-                  <Text style={styles.detailLabel}>Venue</Text>
-                  <Text style={styles.detailValue}>{event.venue}</Text>
+                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Venue</Text>
+                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.venue}</Text>
                 </View>
               </View>
 
-              <View style={styles.detailRow}>
-                <View style={[styles.statusDot, isPast && styles.statusDotPast]} />
+              <View style={s.detailRow}>
+                <View style={[s.statusDot, { backgroundColor: isPast ? colors.textPlaceholder : colors.primary }]} />
                 <View>
-                  <Text style={styles.detailLabel}>Status</Text>
-                  <Text style={styles.detailValue}>{statusLabel} Event</Text>
+                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Status</Text>
+                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{statusLabel} Event</Text>
                 </View>
               </View>
 
-              <Text style={styles.organizer}>Organized by {event.organizer}</Text>
+              <Text style={[s.organizer, { color: colors.textPlaceholder }]}>Organized by {event.organizer}</Text>
             </View>
           </View>
 
@@ -190,13 +193,13 @@ export default function EventDetailScreen() {
             onCommentAdded={() => setCommentCount((c) => c + 1)}
           />
 
-          <View style={styles.relatedSection}>
-            <Text style={styles.relatedTitle}>Related Events</Text>
-            <Text style={styles.relatedSubtitle}>You might also be interested in</Text>
+          <View style={s.relatedSection}>
+            <Text style={[s.relatedTitle, { color: colors.text }]}>Related Events</Text>
+            <Text style={[s.relatedSubtitle, { color: colors.textMuted }]}>You might also be interested in</Text>
 
-            <View style={[styles.relatedGrid, isWide && styles.relatedGridWide]}>
+            <View style={[s.relatedGrid, isWide && s.relatedGridWide]}>
               {related.map((item) => (
-                <View key={item.id} style={[styles.relatedItem, isWide && styles.relatedItemWide]}>
+                <View key={item.id} style={[s.relatedItem, isWide && s.relatedItemWide]}>
                   <EventCard event={item} compact />
                 </View>
               ))}
@@ -210,10 +213,9 @@ export default function EventDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: AppColors.background,
     alignItems: 'center',
   },
   loader: { marginTop: Spacing.xl },
@@ -235,20 +237,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   backLink: {
-    color: AppColors.primary,
     fontWeight: '600',
     fontSize: 14,
   },
   title: {
     fontSize: 26,
     fontWeight: '700',
-    color: AppColors.text,
     marginBottom: Spacing.sm + 4,
     lineHeight: 34,
   },
   description: {
     fontSize: 15,
-    color: AppColors.textMuted,
     lineHeight: 24,
     marginBottom: Spacing.md,
   },
@@ -277,18 +276,16 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     borderRadius: Radius.lg,
-    backgroundColor: AppColors.illustration,
+    backgroundColor: colors.illustration,
   },
   galleryImageWide: {
     flex: 1,
     height: 220,
   },
   sidebar: {
-    backgroundColor: AppColors.surface,
     borderRadius: Radius.lg,
     padding: Spacing.md + 4,
     borderWidth: 1,
-    borderColor: AppColors.borderLight,
     ...Shadow.card,
   },
   sidebarWide: {
@@ -298,7 +295,6 @@ const styles = StyleSheet.create({
   sidebarTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: AppColors.textSecondary,
     marginBottom: Spacing.sm + 4,
   },
   highlightRow: {
@@ -309,12 +305,10 @@ const styles = StyleSheet.create({
   },
   highlightText: {
     fontSize: 14,
-    color: AppColors.textMuted,
     flex: 1,
   },
   divider: {
     height: 1,
-    backgroundColor: AppColors.borderLight,
     marginVertical: Spacing.md,
   },
   detailRow: {
@@ -325,14 +319,12 @@ const styles = StyleSheet.create({
   },
   detailLabel: {
     fontSize: 11,
-    color: AppColors.textPlaceholder,
     fontWeight: '600',
     textTransform: 'uppercase',
     letterSpacing: 0.3,
   },
   detailValue: {
     fontSize: 14,
-    color: AppColors.textSecondary,
     fontWeight: '500',
     marginTop: 1,
   },
@@ -340,15 +332,10 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     borderRadius: 8,
-    backgroundColor: AppColors.primary,
     marginTop: 2,
-  },
-  statusDotPast: {
-    backgroundColor: AppColors.textPlaceholder,
   },
   organizer: {
     fontSize: 13,
-    color: AppColors.textPlaceholder,
     marginTop: Spacing.sm,
     fontStyle: 'italic',
   },
@@ -360,12 +347,10 @@ const styles = StyleSheet.create({
   relatedTitle: {
     fontSize: 22,
     fontWeight: '700',
-    color: AppColors.text,
     marginBottom: 4,
   },
   relatedSubtitle: {
     fontSize: 14,
-    color: AppColors.textMuted,
     marginBottom: Spacing.lg,
   },
   relatedGrid: {
@@ -392,6 +377,5 @@ const styles = StyleSheet.create({
   notFoundTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: AppColors.textSecondary,
   },
 });

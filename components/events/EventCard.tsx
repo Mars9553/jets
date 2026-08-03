@@ -1,5 +1,5 @@
-import React, { memo } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import React, { memo, useRef, useCallback } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Animated } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Calendar } from 'lucide-react-native';
@@ -7,7 +7,9 @@ import { EngagementBar } from '@/components/engagement/EngagementBar';
 import { useLikeToggle } from '@/hooks/useLikeToggle';
 import { EventItem } from '@/lib/api';
 import { getStatusLabel } from '@/data/events';
-import { AppColors, Radius, Shadow, Spacing } from '@/constants/theme';
+import { Radius, Shadow, Spacing } from '@/constants/theme';
+
+import { useTheme } from '@/context/ThemeContext';
 
 type EventCardProps = {
   event: EventItem;
@@ -18,43 +20,66 @@ export const EventCard = memo(function EventCard({ event, compact = false }: Eve
   const router = useRouter();
   const { width } = useWindowDimensions();
   const isWide = width >= 768;
+  const { colors } = useTheme();
+  const s = styles(colors);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handleMouseEnter = useCallback(() => {
+    Animated.spring(scaleAnim, { toValue: 1.02, useNativeDriver: true }).start();
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    Animated.spring(scaleAnim, { toValue: 1, useNativeDriver: true }).start();
+  }, []);
 
   const statusLabel = getStatusLabel(event.status);
   const isPast = event.status === 'past';
 
   const { likes, liked, loading, toggleLike } = useLikeToggle('event', event.id, {
     likes: event.likes,
-    liked: false,
+    liked: event.liked ?? false,
   });
 
   return (
-    <View style={[styles.card, compact && styles.cardCompact, isWide && !compact && styles.cardWide]}>
+    <Animated.View
+      style={[
+        s.card,
+        { backgroundColor: colors.surface, borderColor: colors.borderLight, transform: [{ scale: scaleAnim }] },
+        compact && s.cardCompact,
+        isWide && !compact && s.cardWide,
+      ]}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      {...({ onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave } as any)}
+    >
       <Image
         source={{ uri: event.image }}
-        style={[styles.image, compact && styles.imageCompact]}
+        style={[s.image, compact && s.imageCompact]}
         contentFit="cover"
         transition={200}
       />
 
-      <View style={styles.body}>
-        <View style={[styles.statusBadge, isPast && styles.statusPast]}>
-          <Text style={[styles.statusText, isPast && styles.statusTextPast]}>{statusLabel}</Text>
+      <View style={s.body}>
+        <View style={[s.statusBadge, { backgroundColor: isPast ? colors.inputBg : colors.primaryLight }]}>
+          <Text style={[s.statusText, { color: isPast ? colors.textMuted : colors.primary }]}>
+            {statusLabel}
+          </Text>
         </View>
 
-        <Text style={[styles.title, compact && styles.titleCompact]} numberOfLines={2}>
+        <Text style={[s.title, compact && s.titleCompact, { color: colors.textSecondary }]} numberOfLines={2}>
           {event.title}
         </Text>
 
-        <Text style={styles.description} numberOfLines={2}>
+        <Text style={[s.description, { color: colors.textMuted }]} numberOfLines={2}>
           {event.shortDescription}
         </Text>
 
-        <View style={styles.dateRow}>
-          <Calendar size={14} color={AppColors.textPlaceholder} />
-          <Text style={styles.dateText}>{event.date}</Text>
+        <View style={s.dateRow}>
+          <Calendar size={14} color={colors.textPlaceholder} />
+          <Text style={[s.dateText, { color: colors.textPlaceholder }]}>{event.date}</Text>
         </View>
 
-        <View style={styles.engagementRow}>
+        <View style={s.engagementRow}>
           <EngagementBar
             targetType="event"
             targetId={event.id}
@@ -68,24 +93,22 @@ export const EventCard = memo(function EventCard({ event, compact = false }: Eve
         </View>
 
         <TouchableOpacity
-          style={styles.button}
+          style={[s.button, { backgroundColor: colors.primary }]}
           onPress={() => router.push(`/event/${event.id}` as any)}
           activeOpacity={0.85}
         >
-          <Text style={styles.buttonText}>View Details</Text>
+          <Text style={[s.buttonText, { color: colors.surface }]}>View Details</Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </Animated.View>
   );
 });
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   card: {
-    backgroundColor: AppColors.surface,
     borderRadius: Radius.lg,
     overflow: 'hidden',
     borderWidth: 1,
-    borderColor: AppColors.borderLight,
     ...Shadow.card,
     flex: 1,
     minWidth: 260,
@@ -99,7 +122,7 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 160,
-    backgroundColor: AppColors.illustration,
+    backgroundColor: colors.illustration,
   },
   imageCompact: {
     height: 130,
@@ -109,27 +132,18 @@ const styles = StyleSheet.create({
   },
   statusBadge: {
     alignSelf: 'flex-start',
-    backgroundColor: AppColors.primaryLight,
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: Radius.sm - 2,
     marginBottom: Spacing.sm,
   },
-  statusPast: {
-    backgroundColor: AppColors.inputBg,
-  },
   statusText: {
     fontSize: 11,
     fontWeight: '600',
-    color: AppColors.primary,
-  },
-  statusTextPast: {
-    color: AppColors.textMuted,
   },
   title: {
     fontSize: 17,
     fontWeight: '700',
-    color: AppColors.textSecondary,
     marginBottom: 6,
     lineHeight: 23,
   },
@@ -138,7 +152,6 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: 13,
-    color: AppColors.textMuted,
     lineHeight: 19,
     marginBottom: Spacing.sm + 4,
   },
@@ -150,19 +163,16 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 13,
-    color: AppColors.textPlaceholder,
   },
   engagementRow: {
     marginBottom: Spacing.sm + 4,
   },
   button: {
-    backgroundColor: AppColors.primary,
     borderRadius: Radius.sm,
     paddingVertical: 11,
     alignItems: 'center',
   },
   buttonText: {
-    color: AppColors.surface,
     fontWeight: '600',
     fontSize: 14,
   },

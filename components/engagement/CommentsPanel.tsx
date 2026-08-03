@@ -11,8 +11,9 @@ import {
 import { Send } from 'lucide-react-native';
 import { api, CommentItem, TargetType } from '@/lib/api';
 import { useUser } from '@/context/UserContext';
-import { AppColors, Radius, Spacing } from '@/constants/theme';
+import { Radius, Spacing } from '@/constants/theme';
 import { useToast } from '@/context/ToastContext';
+import { useTheme } from '@/context/ThemeContext';
 
 type CommentsPanelProps = {
   targetType: TargetType;
@@ -23,6 +24,8 @@ type CommentsPanelProps = {
 export function CommentsPanel({ targetType, targetId, onCommentAdded }: CommentsPanelProps) {
   const { user } = useUser();
   const { showToast } = useToast();
+  const { colors } = useTheme();
+  const s = styles(colors);
   const [comments, setComments] = useState<CommentItem[]>([]);
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
@@ -70,76 +73,74 @@ export function CommentsPanel({ targetType, targetId, onCommentAdded }: Comments
 
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Comments ({comments.length})</Text>
+    <View style={[s.container, { borderTopColor: colors.borderLight }]}>
+      <Text style={[s.title, { color: colors.textSecondary }]}>Comments ({comments.length})</Text>
 
       {loading ? (
-        <ActivityIndicator color={AppColors.primary} style={styles.loader} />
+        <ActivityIndicator color={colors.primary} style={s.loader} />
       ) : comments.length === 0 ? (
-        <Text style={styles.empty}>No comments yet. Start the conversation.</Text>
+        <Text style={[s.empty, { color: colors.textPlaceholder }]}>No comments yet. Start the conversation.</Text>
       ) : (
         comments.map((comment) => (
-          <View key={comment.id} style={styles.comment}>
-            <View style={styles.avatar}>
-              <Text style={styles.avatarText}>{comment.initials}</Text>
+          <View key={comment.id} style={s.comment}>
+            <View style={[s.avatar, { backgroundColor: colors.primaryLight }]}>
+              <Text style={[s.avatarText, { color: colors.primary }]}>{comment.initials}</Text>
             </View>
-            <View style={styles.commentBody}>
-              <View style={styles.commentTop}>
-                <Text style={styles.author}>{comment.author}</Text>
-                <Text style={styles.time}>{comment.date}</Text>
+            <View style={[s.commentBody, { backgroundColor: colors.inputBg }]}>
+              <View style={s.commentTop}>
+                <Text style={[s.author, { color: colors.textSecondary }]}>{comment.author}</Text>
+                <Text style={[s.time, { color: colors.textPlaceholder }]}>{comment.date}</Text>
               </View>
-              <Text style={styles.commentText}>{comment.content}</Text>
+              <Text style={[s.commentText, { color: colors.textMuted }]}>{comment.content}</Text>
             </View>
           </View>
         ))
       )}
 
       {user ? (
-        <View style={styles.inputRow}>
+        <View style={s.inputRow}>
           <TextInput
             style={[
-              styles.input,
+              s.input,
+              { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text },
               Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null,
             ]}
             placeholder="Write a comment..."
-            placeholderTextColor={AppColors.textPlaceholder}
+            placeholderTextColor={colors.textPlaceholder}
             value={text}
             onChangeText={setText}
             multiline
           />
           <TouchableOpacity
-            style={[styles.sendBtn, (!text.trim() || submitting) && styles.sendBtnDisabled]}
+            style={[s.sendBtn, { backgroundColor: colors.primary }, (!text.trim() || submitting) && { backgroundColor: colors.textPlaceholder }]}
             onPress={handleSubmit}
             disabled={!text.trim() || submitting}
           >
-            <Send size={16} color={AppColors.surface} />
+            <Send size={16} color={colors.surface} />
           </TouchableOpacity>
         </View>
       ) : (
-        <Text style={styles.signInHint}>Sign in to leave a comment.</Text>
+        <Text style={[s.signInHint, { color: colors.textMuted }]}>Sign in to leave a comment.</Text>
       )}
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   container: {
     marginTop: Spacing.lg,
     paddingTop: Spacing.lg,
     borderTopWidth: 1,
-    borderTopColor: AppColors.borderLight,
   },
   title: {
     fontSize: 16,
     fontWeight: '700',
-    color: AppColors.textSecondary,
     marginBottom: Spacing.md,
   },
   loader: {
     marginVertical: Spacing.md,
   },
   empty: {
-    color: AppColors.textPlaceholder,
     fontSize: 14,
     marginBottom: Spacing.md,
   },
@@ -152,18 +153,15 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: 17,
-    backgroundColor: AppColors.primaryLight,
     alignItems: 'center',
     justifyContent: 'center',
   },
   avatarText: {
     fontSize: 11,
     fontWeight: '700',
-    color: AppColors.primary,
   },
   commentBody: {
     flex: 1,
-    backgroundColor: AppColors.inputBg,
     borderRadius: Radius.md,
     padding: 10,
   },
@@ -175,15 +173,12 @@ const styles = StyleSheet.create({
   author: {
     fontSize: 13,
     fontWeight: '600',
-    color: AppColors.textSecondary,
   },
   time: {
     fontSize: 11,
-    color: AppColors.textPlaceholder,
   },
   commentText: {
     fontSize: 14,
-    color: AppColors.textMuted,
     lineHeight: 20,
   },
   inputRow: {
@@ -195,30 +190,22 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     borderWidth: 1,
-    borderColor: AppColors.border,
     borderRadius: Radius.md,
     paddingHorizontal: 12,
     paddingVertical: 10,
     fontSize: 14,
-    color: AppColors.text,
-    backgroundColor: AppColors.surface,
     maxHeight: 100,
   },
   sendBtn: {
     width: 38,
     height: 38,
     borderRadius: 19,
-    backgroundColor: AppColors.primary,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  sendBtnDisabled: {
-    backgroundColor: AppColors.textPlaceholder,
   },
   signInHint: {
     marginTop: Spacing.md,
     fontSize: 13,
-    color: AppColors.textMuted,
     textAlign: 'center',
   },
 });

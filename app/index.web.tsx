@@ -23,7 +23,7 @@ export default function LandingPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-gradient-to-b from-slate-50/50 via-white to-slate-50/50 text-slate-800 font-sans">
+    <div className="flex flex-col min-h-screen bg-white text-slate-800 font-sans">
       <header className="flex items-center py-6 px-6 max-w-6xl w-full mx-auto box-border">
         <div className="flex items-center gap-2 text-lg font-bold text-slate-800 cursor-pointer select-none" onClick={() => router.push('/(auth)/' as any)}>
           <svg className="w-5.5 h-5.5 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">

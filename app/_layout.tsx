@@ -1,8 +1,8 @@
 import { Stack, useRouter, useSegments } from 'expo-router';
 import { useEffect } from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { AppColors } from '@/constants/theme';
 import { UserProvider, useUser } from '@/context/UserContext';
+import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { registerForNotificationsAsync } from '@/lib/notifications';
 import { ToastProvider } from '@/context/ToastContext';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
@@ -12,6 +12,7 @@ function NavigationGate() {
   const { user, loading } = useUser();
   const segments = useSegments();
   const router = useRouter();
+  const { colors } = useTheme();
 
   useEffect(() => {
     if (loading) return;
@@ -19,10 +20,8 @@ function NavigationGate() {
     const inAuthGroup = segments[0] === '(auth)' || !segments.length;
 
     if (user && inAuthGroup) {
-      // Redirect logged-in user to the main page
       router.replace('/user_notice');
     } else if (!user && !inAuthGroup) {
-      // Redirect unauthenticated user to the sign in page
       router.replace('/(auth)/' as any);
     }
   }, [user, loading, segments]);
@@ -31,7 +30,7 @@ function NavigationGate() {
     <Stack
       screenOptions={{
         headerShown: false,
-        contentStyle: { backgroundColor: AppColors.background },
+        contentStyle: { backgroundColor: colors.background },
         animation: 'fade',
       }}
     />
@@ -56,10 +55,11 @@ export default function RootLayout() {
   return (
     <UserProvider>
       <ToastProvider>
-        <StatusBar style="dark" />
-        <AppContent />
+        <ThemeProvider>
+          <StatusBar style="dark" />
+          <AppContent />
+        </ThemeProvider>
       </ToastProvider>
     </UserProvider>
   );
 }
-

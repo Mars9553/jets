@@ -1,6 +1,7 @@
 require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 
 const express = require('express');
+const path = require('path');
 const { connectDb, getSupabase } = require('./db');
 const { SEED_NOTICES, SEED_EVENTS } = require('./seedData');
 
@@ -29,6 +30,17 @@ app.use('/api/notices', noticesRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api', engagementRouter);
 app.use('/api/users', usersRouter);
+
+app.use('/api', (req, res) => {
+  res.status(404).json({ error: 'Not found' });
+});
+
+const webBuildPath = path.join(__dirname, '..', 'dist');
+app.use(express.static(webBuildPath, { fallthrough: true }));
+
+app.use((req, res) => {
+  res.sendFile(path.join(webBuildPath, 'index.html'));
+});
 
 app.use((err, _req, res, _next) => {
   console.error(err);
@@ -59,6 +71,7 @@ async function autoSeed() {
       category: n.category,
       title: n.title,
       description: n.description,
+      summary: n.summary,
       date: n.date,
       created_at: now,
       updated_at: now,

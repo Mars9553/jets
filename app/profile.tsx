@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
   View,
   Text,
@@ -22,12 +22,17 @@ import {
   Shield,
   HelpCircle,
   Award,
+  Moon,
+  Sun,
+  Laptop,
+  ChevronDown,
 } from 'lucide-react-native';
 import { BoardNavbar } from '@/components/board/BoardNavbar';
 import { BoardFooter } from '@/components/board/BoardFooter';
 import { BottomTabs, BOTTOM_TAB_HEIGHT } from '@/components/board/BottomTabs';
-import { AppColors, Layout, Radius, Shadow, Spacing } from '@/constants/theme';
+import { Layout, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useUser } from '@/context/UserContext';
+import { useTheme } from '@/context/ThemeContext';
 import { api } from '@/lib/api';
 import { getReadIds } from '@/lib/readReceipts';
 import { triggerLocalNotification } from '@/lib/notifications';
@@ -35,9 +40,13 @@ import { triggerLocalNotification } from '@/lib/notifications';
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, setUser } = useUser();
+  const { colors, mode, setMode } = useTheme();
+  const s = useMemo(() => styles(colors), [colors]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [readCount, setReadCount] = useState(0);
   const [alertsCount, setAlertsCount] = useState(0);
+  const [themeExpanded, setThemeExpanded] = useState(false);
+  const [logoutHovered, setLogoutHovered] = useState(false);
 
   // Reload stats every time this screen comes into focus so that
   // notices AND events viewed in detail pages are reflected immediately.
@@ -91,95 +100,95 @@ export default function ProfileScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={AppColors.surface} />
+    <SafeAreaView style={s.container}>
+      <StatusBar barStyle="dark-content" backgroundColor={colors.surface} />
       <BoardNavbar />
 
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={[
-          styles.scrollContent,
+          s.scrollContent,
           Platform.OS !== 'web' && { paddingBottom: BOTTOM_TAB_HEIGHT + Spacing.lg },
         ]}
       >
-        <View style={styles.page}>
+        <View style={s.page}>
           {/* Profile Header */}
-          <View style={styles.profileHeaderCard}>
-            <View style={styles.avatarContainer}>
-              <View style={styles.avatar}>
-                <Text style={styles.avatarText}>{user?.initials || '??'}</Text>
+          <View style={s.profileHeaderCard}>
+            <View style={s.avatarContainer}>
+              <View style={s.avatar}>
+                <Text style={s.avatarText}>{user?.initials || '??'}</Text>
               </View>
-              <View style={styles.badgeContainer}>
-                <Award size={14} color={AppColors.surface} />
+              <View style={s.badgeContainer}>
+                <Award size={14} color={colors.surface} />
               </View>
             </View>
-            <Text style={styles.userName}>{user?.fullName || 'Guest User'}</Text>
-            <View style={styles.deptBadge}>
-              <Text style={styles.deptBadgeText}>
+            <Text style={s.userName}>{user?.fullName || 'Guest User'}</Text>
+            <View style={s.deptBadge}>
+              <Text style={s.deptBadgeText}>
                 {user?.department}{user?.level ? ` • Level ${user.level}` : ''}
               </Text>
             </View>
           </View>
 
-          <View style={styles.statsRow}>
-            <View style={styles.statItem}>
-              <BookOpen size={20} color={AppColors.success} style={styles.statIcon} />
-              <Text style={styles.statVal}>{readCount}</Text>
-              <Text style={styles.statLbl}>Read Memos</Text>
+          <View style={s.statsRow}>
+            <View style={s.statItem}>
+              <BookOpen size={20} color={colors.success} style={s.statIcon} />
+              <Text style={s.statVal}>{readCount}</Text>
+              <Text style={s.statLbl}>Read Memos</Text>
             </View>
-            <View style={styles.statItem}>
-              <Bell size={20} color={alertsCount > 0 ? "#eab308" : AppColors.textMuted} style={styles.statIcon} />
-              <Text style={styles.statVal}>{alertsCount}</Text>
-              <Text style={styles.statLbl}>Unread Alerts</Text>
+            <View style={s.statItem}>
+              <Bell size={20} color={alertsCount > 0 ? "#eab308" : colors.textMuted} style={s.statIcon} />
+              <Text style={s.statVal}>{alertsCount}</Text>
+              <Text style={s.statLbl}>Unread Alerts</Text>
             </View>
           </View>
 
           {/* Personal Information */}
-          <Text style={styles.sectionTitle}>Personal Information</Text>
-          <View style={styles.infoCard}>
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconWrapper}>
-                <User size={18} color={AppColors.textMuted} />
+          <Text style={s.sectionTitle}>Personal Information</Text>
+          <View style={s.infoCard}>
+            <View style={s.infoRow}>
+              <View style={s.infoIconWrapper}>
+                <User size={18} color={colors.textMuted} />
               </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>MAT Number</Text>
-                <Text style={styles.infoValue}>{user?.matNumber || 'N/A'}</Text>
-              </View>
-            </View>
-
-            <View style={styles.divider} />
-
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconWrapper}>
-                <BookOpen size={18} color={AppColors.textMuted} />
-              </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Department</Text>
-                <Text style={styles.infoValue}>{user?.department || 'N/A'}</Text>
+              <View style={s.infoContent}>
+                <Text style={s.infoLabel}>MAT Number</Text>
+                <Text style={s.infoValue}>{user?.matNumber || 'N/A'}</Text>
               </View>
             </View>
 
-            <View style={styles.divider} />
+            <View style={s.divider} />
 
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconWrapper}>
-                <Award size={18} color={AppColors.textMuted} />
+            <View style={s.infoRow}>
+              <View style={s.infoIconWrapper}>
+                <BookOpen size={18} color={colors.textMuted} />
               </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Faculty</Text>
-                <Text style={styles.infoValue}>{user?.faculty || 'N/A'}</Text>
+              <View style={s.infoContent}>
+                <Text style={s.infoLabel}>Department</Text>
+                <Text style={s.infoValue}>{user?.department || 'N/A'}</Text>
               </View>
             </View>
 
-            <View style={styles.divider} />
+            <View style={s.divider} />
 
-            <View style={styles.infoRow}>
-              <View style={styles.infoIconWrapper}>
-                <Mail size={18} color={AppColors.textMuted} />
+            <View style={s.infoRow}>
+              <View style={s.infoIconWrapper}>
+                <Award size={18} color={colors.textMuted} />
               </View>
-              <View style={styles.infoContent}>
-                <Text style={styles.infoLabel}>Email Address</Text>
-                <Text style={styles.infoValue}>
+              <View style={s.infoContent}>
+                <Text style={s.infoLabel}>Faculty</Text>
+                <Text style={s.infoValue}>{user?.faculty || 'N/A'}</Text>
+              </View>
+            </View>
+
+            <View style={s.divider} />
+
+            <View style={s.infoRow}>
+              <View style={s.infoIconWrapper}>
+                <Mail size={18} color={colors.textMuted} />
+              </View>
+              <View style={s.infoContent}>
+                <Text style={s.infoLabel}>Email Address</Text>
+                <Text style={s.infoValue}>
                   {user?.matNumber ? `${user.matNumber.replace(/[^a-zA-Z0-9]/g, '').toLowerCase()}@uni.edu.ng` : 'N/A'}
                 </Text>
               </View>
@@ -187,30 +196,88 @@ export default function ProfileScreen() {
           </View>
 
           {/* App Preferences */}
-          <Text style={styles.sectionTitle}>Preferences</Text>
-          <View style={styles.infoCard}>
-            <View style={styles.prefRow}>
-              <View style={styles.prefLeft}>
-                <View style={[styles.infoIconWrapper, { backgroundColor: AppColors.primaryLight }]}>
-                  <Bell size={18} color={AppColors.primary} />
+          <Text style={s.sectionTitle}>Preferences</Text>
+          <View style={s.infoCard}>
+            <View style={s.prefRow}>
+              <View style={s.prefLeft}>
+                <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
+                  <Bell size={18} color={colors.primary} />
                 </View>
-                <View style={styles.infoContent}>
-                  <Text style={styles.prefTitle}>Push Notifications</Text>
-                  <Text style={styles.prefSubtitle}>Get notified on urgent updates</Text>
+                <View style={s.infoContent}>
+                  <Text style={s.prefTitle}>Push Notifications</Text>
+                  <Text style={s.prefSubtitle}>Get notified on urgent updates</Text>
                 </View>
               </View>
               <Switch
                 value={notificationsEnabled}
                 onValueChange={setNotificationsEnabled}
-                trackColor={{ false: AppColors.border, true: AppColors.primaryMuted }}
-                thumbColor={notificationsEnabled ? AppColors.primary : AppColors.textPlaceholder}
+                trackColor={{ false: colors.border, true: colors.primaryMuted }}
+                thumbColor={notificationsEnabled ? colors.primary : colors.textPlaceholder}
               />
             </View>
 
-            <View style={styles.divider} />
+          <View style={s.divider} />
 
-            <TouchableOpacity 
-              style={styles.prefRowButton} 
+          <TouchableOpacity
+            style={s.prefRow}
+            onPress={() => setThemeExpanded(!themeExpanded)}
+            activeOpacity={0.7}
+          >
+            <View style={s.prefLeft}>
+              <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
+                <Moon size={18} color={colors.primary} />
+              </View>
+              <View style={s.infoContent}>
+                <Text style={s.prefTitle}>Appearance</Text>
+                <Text style={s.prefSubtitle}>Choose light, dark, or system theme</Text>
+              </View>
+            </View>
+            <ChevronDown
+              size={18}
+              color={colors.textPlaceholder}
+            />
+          </TouchableOpacity>
+
+          {themeExpanded && (
+            <View style={s.themeOptions}>
+              {([
+                { key: 'light' as const, icon: Sun, label: 'Light' },
+                { key: 'dark' as const, icon: Moon, label: 'Dark' },
+                { key: 'system' as const, icon: Laptop, label: 'System' },
+              ]).map(({ key, icon: Icon, label }) => {
+                const isActive = mode === key;
+                return (
+                  <TouchableOpacity
+                    key={key}
+                    style={[
+                      s.themeOption,
+                      { backgroundColor: isActive ? colors.primary : colors.surface },
+                    ]}
+                    onPress={() => setMode(key)}
+                    activeOpacity={0.7}
+                  >
+                    <Icon
+                      size={16}
+                      color={isActive ? colors.surface : colors.textMuted}
+                    />
+                    <Text
+                      style={[
+                        s.themeOptionText,
+                        { color: isActive ? colors.surface : colors.textSecondary },
+                      ]}
+                    >
+                      {label}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          )}
+
+          <View style={s.divider} />
+
+          <TouchableOpacity 
+              style={s.prefRowButton} 
               activeOpacity={0.7}
               onPress={async () => {
                 await triggerLocalNotification(
@@ -219,57 +286,61 @@ export default function ProfileScreen() {
                 );
               }}
             >
-              <View style={styles.prefLeft}>
-                <View style={[styles.infoIconWrapper, { backgroundColor: AppColors.primaryLight }]}>
-                  <Bell size={18} color={AppColors.primary} />
+              <View style={s.prefLeft}>
+                <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
+                  <Bell size={18} color={colors.primary} />
                 </View>
-                <View style={styles.infoContent}>
-                  <Text style={styles.prefTitle}>Send Test Notification</Text>
-                  <Text style={styles.prefSubtitle}>Trigger a test alert instantly</Text>
-                </View>
-              </View>
-              <ChevronRight size={18} color={AppColors.textPlaceholder} />
-            </TouchableOpacity>
-
-            <View style={styles.divider} />
-
-            <TouchableOpacity style={styles.prefRowButton} activeOpacity={0.7}>
-              <View style={styles.prefLeft}>
-                <View style={[styles.infoIconWrapper, { backgroundColor: AppColors.successBg }]}>
-                  <Shield size={18} color={AppColors.success} />
-                </View>
-                <View style={styles.infoContent}>
-                  <Text style={styles.prefTitle}>Privacy & Security</Text>
-                  <Text style={styles.prefSubtitle}>Manage your account security</Text>
+                <View style={s.infoContent}>
+                  <Text style={s.prefTitle}>Send Test Notification</Text>
+                  <Text style={s.prefSubtitle}>Trigger a test alert instantly</Text>
                 </View>
               </View>
-              <ChevronRight size={18} color={AppColors.textPlaceholder} />
+              <ChevronRight size={18} color={colors.textPlaceholder} />
             </TouchableOpacity>
 
-            <View style={styles.divider} />
+            <View style={s.divider} />
 
-            <TouchableOpacity style={styles.prefRowButton} activeOpacity={0.7}>
-              <View style={styles.prefLeft}>
-                <View style={[styles.infoIconWrapper, { backgroundColor: '#fef9c3' }]}>
+            <TouchableOpacity style={s.prefRowButton} activeOpacity={0.7}>
+              <View style={s.prefLeft}>
+                <View style={[s.infoIconWrapper, { backgroundColor: colors.successBg }]}>
+                  <Shield size={18} color={colors.success} />
+                </View>
+                <View style={s.infoContent}>
+                  <Text style={s.prefTitle}>Privacy & Security</Text>
+                  <Text style={s.prefSubtitle}>Manage your account security</Text>
+                </View>
+              </View>
+              <ChevronRight size={18} color={colors.textPlaceholder} />
+            </TouchableOpacity>
+
+            <View style={s.divider} />
+
+            <TouchableOpacity style={s.prefRowButton} activeOpacity={0.7}>
+              <View style={s.prefLeft}>
+                <View style={[s.infoIconWrapper, { backgroundColor: '#fef9c3' }]}>
                   <HelpCircle size={18} color="#ca8a04" />
                 </View>
-                <View style={styles.infoContent}>
-                  <Text style={styles.prefTitle}>Help & Support</Text>
-                  <Text style={styles.prefSubtitle}>FAQ, contact admin, support ticket</Text>
+                <View style={s.infoContent}>
+                  <Text style={s.prefTitle}>Help & Support</Text>
+                  <Text style={s.prefSubtitle}>FAQ, contact admin, support ticket</Text>
                 </View>
               </View>
-              <ChevronRight size={18} color={AppColors.textPlaceholder} />
+              <ChevronRight size={18} color={colors.textPlaceholder} />
             </TouchableOpacity>
           </View>
 
           {/* Logout Action */}
           <TouchableOpacity
-            style={styles.logoutButton}
+            style={[
+              s.logoutButton,
+              logoutHovered && { backgroundColor: '#fee2e2', borderColor: '#fecaca' },
+            ]}
             onPress={handleLogout}
             activeOpacity={0.8}
+            {...({ onMouseEnter: () => setLogoutHovered(true), onMouseLeave: () => setLogoutHovered(false) } as any)}
           >
-            <LogOut size={18} color="#dc2626" />
-            <Text style={styles.logoutText}>Log Out Account</Text>
+            <LogOut size={18} color={logoutHovered ? '#b91c1c' : '#dc2626'} />
+            <Text style={[s.logoutText, logoutHovered && { color: '#b91c1c' }]}>Log Out Account</Text>
           </TouchableOpacity>
 
           <BoardFooter />
@@ -281,10 +352,10 @@ export default function ProfileScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: AppColors.background,
+    backgroundColor: colors.background,
     alignItems: 'center',
   },
   scrollContent: {
@@ -298,13 +369,13 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.lg,
   },
   profileHeaderCard: {
-    backgroundColor: AppColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: Radius.lg,
     paddingVertical: Spacing.xl,
     paddingHorizontal: Spacing.md,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: AppColors.borderLight,
+    borderColor: colors.borderLight,
     ...Shadow.card,
     marginBottom: Spacing.md,
   },
@@ -316,14 +387,14 @@ const styles = StyleSheet.create({
     width: 84,
     height: 84,
     borderRadius: 42,
-    backgroundColor: AppColors.primary,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 4,
-    borderColor: AppColors.primaryLight,
+    borderColor: colors.primaryLight,
   },
   avatarText: {
-    color: AppColors.surface,
+    color: colors.surface,
     fontSize: 32,
     fontWeight: '700',
   },
@@ -331,23 +402,23 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    backgroundColor: AppColors.success,
+    backgroundColor: colors.success,
     width: 26,
     height: 26,
     borderRadius: 13,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: AppColors.surface,
+    borderColor: colors.surface,
   },
   userName: {
     fontSize: 22,
     fontWeight: '700',
-    color: AppColors.text,
+    color: colors.text,
     marginBottom: 6,
   },
   deptBadge: {
-    backgroundColor: AppColors.primaryLight,
+    backgroundColor: colors.primaryLight,
     paddingHorizontal: 12,
     paddingVertical: 5,
     borderRadius: Radius.md,
@@ -355,7 +426,7 @@ const styles = StyleSheet.create({
   deptBadgeText: {
     fontSize: 12,
     fontWeight: '600',
-    color: AppColors.primary,
+    color: colors.primary,
   },
   statsRow: {
     flexDirection: 'row',
@@ -364,12 +435,12 @@ const styles = StyleSheet.create({
   },
   statItem: {
     flex: 1,
-    backgroundColor: AppColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: Radius.md,
     padding: Spacing.md - 4,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: AppColors.borderLight,
+    borderColor: colors.borderLight,
     ...Shadow.card,
   },
   statIcon: {
@@ -378,28 +449,28 @@ const styles = StyleSheet.create({
   statVal: {
     fontSize: 18,
     fontWeight: '700',
-    color: AppColors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 2,
   },
   statLbl: {
     fontSize: 11,
-    color: AppColors.textMuted,
+    color: colors.textMuted,
     fontWeight: '500',
   },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: AppColors.textMuted,
+    color: colors.textMuted,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
     marginBottom: Spacing.sm,
     paddingLeft: 4,
   },
   infoCard: {
-    backgroundColor: AppColors.surface,
+    backgroundColor: colors.surface,
     borderRadius: Radius.lg,
     borderWidth: 1,
-    borderColor: AppColors.borderLight,
+    borderColor: colors.borderLight,
     ...Shadow.card,
     marginBottom: Spacing.lg,
     overflow: 'hidden',
@@ -414,7 +485,7 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: Radius.sm,
-    backgroundColor: AppColors.inputBg,
+    backgroundColor: colors.inputBg,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -423,18 +494,18 @@ const styles = StyleSheet.create({
   },
   infoLabel: {
     fontSize: 11,
-    color: AppColors.textPlaceholder,
+    color: colors.textPlaceholder,
     fontWeight: '500',
     marginBottom: 2,
   },
   infoValue: {
     fontSize: 14,
     fontWeight: '600',
-    color: AppColors.textSecondary,
+    color: colors.textSecondary,
   },
   divider: {
     height: 1,
-    backgroundColor: AppColors.borderLight,
+    backgroundColor: colors.borderLight,
     marginHorizontal: Spacing.md,
   },
   prefRow: {
@@ -452,18 +523,40 @@ const styles = StyleSheet.create({
   prefTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: AppColors.textSecondary,
+    color: colors.textSecondary,
     marginBottom: 2,
   },
   prefSubtitle: {
     fontSize: 12,
-    color: AppColors.textMuted,
+    color: colors.textMuted,
   },
   prefRowButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     padding: Spacing.md,
+  },
+  themeOptions: {
+    flexDirection: 'row',
+    borderRadius: Radius.lg,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    backgroundColor: colors.surface,
+    marginBottom: Spacing.md,
+  },
+  themeOption: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: Spacing.sm,
+    paddingVertical: Spacing.sm + 2,
+    paddingHorizontal: Spacing.md,
+  },
+  themeOptionText: {
+    fontSize: 14,
+    fontWeight: '500',
   },
   logoutButton: {
     flexDirection: 'row',

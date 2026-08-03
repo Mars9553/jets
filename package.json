@@ -7,9 +7,9 @@
     "reset-project": "node ./scripts/reset-project.js",
     "android": "npx expo run:android",
     "ios": "npx expo run:ios",
-    "web": "npx expo start --web",
+    "web": "node scripts/start-web.js",
     "server": "node server/index.js",
-    "dev": "concurrently --names \"WEB,API,CSS\" --prefix-colors \"cyan,green,blue\" \"npm run web\" \"npm run server\" \"npx @tailwindcss/cli -i ./styles/global.css -o ./styles/tailwind-output.css --watch\"",
+    "dev": "concurrently --names \"WEB,CSS\" --prefix-colors \"cyan,blue\" \"npm run web\" \"npx @tailwindcss/cli -i ./styles/global.css -o ./styles/tailwind-output.css --watch\"",
     "seed": "node server/seed.js",
     "lint": "npx expo lint"
   },

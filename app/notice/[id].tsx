@@ -3,9 +3,8 @@ import {
   View,
   Text,
   StyleSheet,
-  ScrollView,
   SafeAreaView,
-  Platform,
+  ScrollView,
   StatusBar,
   TouchableOpacity,
   ActivityIndicator,
@@ -20,13 +19,16 @@ import { useLikeToggle } from '@/hooks/useLikeToggle';
 import { useNoticeDownload } from '@/hooks/useNoticeDownload';
 import { api, NoticeItem } from '@/lib/api';
 import { useUser } from '@/context/UserContext';
+import { useTheme } from '@/context/ThemeContext';
 import { AppColors, Layout, Radius, Shadow, Spacing } from '@/constants/theme';
 
-function CategoryTag({ category }: { category: string }) {
-  const colors = AppColors.category[category] ?? AppColors.category.General;
+function CategoryTag({ category, colors }: { category: string; colors: typeof AppColors }) {
+  const s = styles(colors);
+  const bg = colors.category[category]?.bg ?? AppColors.category[category]?.bg ?? AppColors.category.General.bg;
+  const text = colors.category[category]?.text ?? AppColors.category[category]?.text ?? AppColors.category.General.text;
   return (
-    <View style={[styles.tag, { backgroundColor: colors.bg }]}>
-      <Text style={[styles.tagText, { color: colors.text }]}>{category}</Text>
+    <View style={[s.tag, { backgroundColor: bg }]}>
+      <Text style={[s.tagText, { color: text }]}>{category}</Text>
     </View>
   );
 }
@@ -35,6 +37,9 @@ export default function NoticeDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { user } = useUser();
+  const { colors, resolvedTheme } = useTheme();
+  const s = styles(colors);
+
   const [notice, setNotice] = useState<NoticeItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [commentCount, setCommentCount] = useState(0);
@@ -69,24 +74,23 @@ export default function NoticeDetailScreen() {
 
   const { downloading, promptDownload } = useNoticeDownload();
 
-
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
         <BoardNavbar />
-        <ActivityIndicator style={styles.loader} color={AppColors.primary} />
+        <ActivityIndicator style={s.loader} color={colors.primary} />
       </SafeAreaView>
     );
   }
 
   if (!notice) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
         <BoardNavbar />
-        <View style={styles.notFound}>
-          <Text style={styles.notFoundTitle}>Notice not found</Text>
+        <View style={s.notFound}>
+          <Text style={[s.notFoundTitle, { color: colors.textSecondary }]}>Notice not found</Text>
           <TouchableOpacity onPress={() => router.replace('/user_notice')}>
-            <Text style={styles.backLink}>← Back to notices</Text>
+            <Text style={[s.backLink, { color: colors.primary }]}>← Back to notices</Text>
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -94,43 +98,43 @@ export default function NoticeDetailScreen() {
   }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor={AppColors.surface} />
+    <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
+      <StatusBar barStyle={resolvedTheme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.surface} />
       <BoardNavbar />
 
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        <View style={styles.page}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <ArrowLeft size={16} color={AppColors.primary} />
-            <Text style={styles.backLink}>Back to notices</Text>
+      <ScrollView contentContainerStyle={s.scrollContent} showsVerticalScrollIndicator={false}>
+        <View style={s.page}>
+          <TouchableOpacity style={s.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+            <ArrowLeft size={16} color={colors.primary} />
+            <Text style={[s.backLink, { color: colors.primary }]}>Back to notices</Text>
           </TouchableOpacity>
 
-          <View style={styles.card}>
-            <View style={styles.cardTop}>
-              <CategoryTag category={notice.category} />
-              <View style={styles.dateRow}>
-                <Calendar size={14} color={AppColors.textPlaceholder} />
-                <Text style={styles.metaText}>{notice.date}</Text>
+          <View style={[s.card, { backgroundColor: colors.surface, borderColor: colors.borderLight }]}>
+            <View style={s.cardTop}>
+              <CategoryTag category={notice.category} colors={colors} />
+              <View style={s.dateRow}>
+                <Calendar size={14} color={colors.textPlaceholder} />
+                <Text style={[s.metaText, { color: colors.textPlaceholder }]}>{notice.date}</Text>
               </View>
             </View>
 
-            <View style={styles.titleRow}>
-              <Text style={[styles.title, { flex: 1 }]}>{notice.title}</Text>
+            <View style={s.titleRow}>
+              <Text style={[s.title, { flex: 1, color: colors.text }]}>{notice.title}</Text>
               <TouchableOpacity
-                style={styles.downloadBtn}
+                style={[s.downloadBtn, { backgroundColor: colors.primaryLight, borderColor: colors.primaryMuted }]}
                 onPress={() => promptDownload(notice)}
                 disabled={downloading}
                 activeOpacity={0.75}
               >
                 {downloading ? (
-                  <ActivityIndicator size="small" color={AppColors.primary} />
+                  <ActivityIndicator size="small" color={colors.primary} />
                 ) : (
-                  <Download size={18} color={AppColors.primary} />
+                  <Download size={18} color={colors.primary} />
                 )}
               </TouchableOpacity>
             </View>
 
-            <Text style={styles.description}>{notice.description}</Text>
+            <Text style={[s.description, { color: colors.textMuted }]}>{notice.description}</Text>
 
             <EngagementBar
               targetType="notice"
@@ -156,10 +160,9 @@ export default function NoticeDetailScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: AppColors.background,
     alignItems: 'center',
   },
   loader: { marginTop: Spacing.xl },
@@ -178,16 +181,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.md,
   },
   backLink: {
-    color: AppColors.primary,
     fontWeight: '600',
     fontSize: 14,
   },
   card: {
-    backgroundColor: AppColors.surface,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: AppColors.borderLight,
     ...Shadow.card,
   },
   cardTop: {
@@ -203,17 +203,15 @@ const styles = StyleSheet.create({
   },
   tagText: { fontSize: 11, fontWeight: '600' },
   dateRow: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  metaText: { color: AppColors.textPlaceholder, fontSize: 13 },
+  metaText: { fontSize: 13 },
   title: {
     fontSize: 24,
     fontWeight: '700',
-    color: AppColors.text,
     marginBottom: Spacing.sm,
     lineHeight: 32,
   },
   description: {
     fontSize: 15,
-    color: AppColors.textMuted,
     lineHeight: 24,
     marginBottom: Spacing.md,
   },
@@ -226,7 +224,6 @@ const styles = StyleSheet.create({
   notFoundTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: AppColors.textSecondary,
   },
   titleRow: {
     flexDirection: 'row',
@@ -239,8 +236,6 @@ const styles = StyleSheet.create({
     height: 38,
     borderRadius: Radius.sm,
     borderWidth: 1,
-    borderColor: AppColors.primaryMuted,
-    backgroundColor: AppColors.primaryLight,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 2,

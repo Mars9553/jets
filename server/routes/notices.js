@@ -50,6 +50,7 @@ function formatNotice(doc) {
     category: doc.category,
     title: doc.title,
     description: doc.description,
+    summary: doc.summary ?? null,
     date: doc.date,
     createdAt: doc.created_at,
     comments: doc.comments ?? 0,

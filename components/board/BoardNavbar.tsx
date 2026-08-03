@@ -1,8 +1,9 @@
 import { View, Text, TouchableOpacity, StyleSheet, Platform, useWindowDimensions } from 'react-native';
 import { useRouter, usePathname } from 'expo-router';
 import { Bell, Calendar, User } from 'lucide-react-native';
-import { AppColors, Layout, Radius, Shadow, Spacing } from '@/constants/theme';
+import { Layout, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useUser } from '@/context/UserContext';
+import { useTheme } from '@/context/ThemeContext';
 
 type NavRoute = 'notices' | 'events' | 'profile';
 
@@ -22,37 +23,39 @@ export function BoardNavbar() {
   const router = useRouter();
   const pathname = usePathname();
   const { user } = useUser();
+  const { colors } = useTheme();
+  const s = styles(colors);
   const active = resolveActive(pathname);
   const { width } = useWindowDimensions();
   const showLabels = width >= 640;
 
   return (
-    <View style={styles.navbar}>
-      <View style={styles.inner}>
+    <View style={[s.navbar, { backgroundColor: colors.surface, borderBottomColor: colors.borderLight, shadowColor: colors.text }]}>
+      <View style={s.inner}>
         <TouchableOpacity
-          style={styles.brand}
+          style={s.brand}
           onPress={() => router.push('/user_notice')}
           activeOpacity={0.8}
         >
-          <View style={styles.logo}>
-            <Bell size={18} color={AppColors.surface} />
+          <View style={[s.logo, { backgroundColor: colors.primary }]}>
+            <Bell size={18} color={colors.surface} />
           </View>
-          {showLabels && <Text style={styles.brandText}>Digital Bulletin Board</Text>}
+          {showLabels && <Text style={[s.brandText, { color: colors.textSecondary }]}>Digital Bulletin Board</Text>}
         </TouchableOpacity>
 
-        <View style={styles.navLinks}>
+        <View style={s.navLinks}>
           {NAV_ITEMS.map(({ key, label, href, icon: Icon }) => {
             const isActive = active === key;
             return (
               <TouchableOpacity
                 key={key}
-                style={[styles.navLink, isActive && styles.navLinkActive]}
+                style={[s.navLink, isActive && { backgroundColor: colors.primaryLight }]}
                 onPress={() => router.push(href as any)}
                 activeOpacity={0.7}
               >
-                <Icon size={15} color={isActive ? AppColors.primary : AppColors.textMuted} />
+                <Icon size={15} color={isActive ? colors.primary : colors.textMuted} />
                 {showLabels && (
-                  <Text style={[styles.navLinkText, isActive && styles.navLinkTextActive]}>
+                  <Text style={[s.navLinkText, isActive && { color: colors.primary, fontWeight: '700' }]}>
                     {label}
                   </Text>
                 )}
@@ -62,29 +65,27 @@ export function BoardNavbar() {
         </View>
 
         <TouchableOpacity
-          style={styles.avatar}
+          style={[s.avatar, { backgroundColor: colors.primary, borderColor: colors.primaryLight }]}
           onPress={() => router.push('/profile' as any)}
           activeOpacity={0.8}
         >
-          <Text style={styles.avatarText}>{user?.initials || '??'}</Text>
+          <Text style={[s.avatarText, { color: colors.surface }]}>{user?.initials || '??'}</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   navbar: {
-    backgroundColor: AppColors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: AppColors.borderLight,
     width: '100%',
     alignItems: 'center',
     ...Shadow.card,
     zIndex: 1000,
   },
   inner: {
-    height: Layout.navbarHeight + 6, // Slightly taller for better spacing
+    height: Layout.navbarHeight + 6,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -100,7 +101,6 @@ const styles = StyleSheet.create({
     flexShrink: 1,
   },
   logo: {
-    backgroundColor: AppColors.primary,
     padding: 7,
     borderRadius: Radius.md,
   },
@@ -108,7 +108,6 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 16,
     letterSpacing: -0.3,
-    color: AppColors.textSecondary,
   },
   navLinks: {
     flexDirection: 'row',
@@ -123,37 +122,25 @@ const styles = StyleSheet.create({
     gap: 6,
     paddingHorizontal: 12,
     paddingVertical: 7,
-    borderRadius: 20, // Rounded pill-style links
-  },
-  navLinkActive: {
-    backgroundColor: AppColors.primaryLight,
+    borderRadius: 20,
   },
   navLinkText: {
     fontSize: 13,
     fontWeight: '600',
-    color: AppColors.textMuted,
-  },
-  navLinkTextActive: {
-    color: AppColors.primary,
-    fontWeight: '700',
   },
   avatar: {
-    backgroundColor: AppColors.primary,
     width: 36,
     height: 36,
     borderRadius: 18,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: AppColors.primaryLight,
-    shadowColor: AppColors.primary,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
   },
   avatarText: {
-    color: AppColors.surface,
     fontSize: 12,
     fontWeight: '700',
   },

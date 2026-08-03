@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Bell, Calendar, User } from 'lucide-react-native';
-import { AppColors, Layout, Spacing } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 
 type Tab = 'notices' | 'events' | 'profile';
 
@@ -11,51 +11,51 @@ type BottomTabsProps = {
 
 export function BottomTabs({ active }: BottomTabsProps) {
   const router = useRouter();
+  const { colors } = useTheme();
+  const s = styles(colors);
 
   if (Platform.OS === 'web') return null;
 
   return (
-    <View style={styles.container}>
+    <View style={[s.container, { backgroundColor: colors.surface, borderTopColor: colors.border }]}>
       <TouchableOpacity
-        style={[styles.tab, active === 'notices' && styles.tabActive]}
+        style={[s.tab, active === 'notices' && [s.tabActive, { borderTopColor: colors.primary }]]}
         onPress={() => router.replace('/user_notice')}
         activeOpacity={0.7}
       >
-        <Bell size={20} color={active === 'notices' ? AppColors.primary : AppColors.textMuted} />
-        <Text style={[styles.label, active === 'notices' && styles.labelActive]}>Notices</Text>
+        <Bell size={20} color={active === 'notices' ? colors.primary : colors.textMuted} />
+        <Text style={[s.label, active === 'notices' && [s.labelActive, { color: colors.primary }]]}>Notices</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.tab, active === 'events' && styles.tabActive]}
+        style={[s.tab, active === 'events' && [s.tabActive, { borderTopColor: colors.primary }]]}
         onPress={() => router.replace('/event_page')}
         activeOpacity={0.7}
       >
-        <Calendar size={20} color={active === 'events' ? AppColors.primary : AppColors.textMuted} />
-        <Text style={[styles.label, active === 'events' && styles.labelActive]}>Events</Text>
+        <Calendar size={20} color={active === 'events' ? colors.primary : colors.textMuted} />
+        <Text style={[s.label, active === 'events' && [s.labelActive, { color: colors.primary }]]}>Events</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={[styles.tab, active === 'profile' && styles.tabActive]}
+        style={[s.tab, active === 'profile' && [s.tabActive, { borderTopColor: colors.primary }]]}
         onPress={() => router.replace('/profile' as any)}
         activeOpacity={0.7}
       >
-        <User size={20} color={active === 'profile' ? AppColors.primary : AppColors.textMuted} />
-        <Text style={[styles.label, active === 'profile' && styles.labelActive]}>Profile</Text>
+        <User size={20} color={active === 'profile' ? colors.primary : colors.textMuted} />
+        <Text style={[s.label, active === 'profile' && [s.labelActive, { color: colors.primary }]]}>Profile</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   container: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
     height: 60,
-    backgroundColor: AppColors.surface,
     borderTopWidth: 1,
-    borderTopColor: AppColors.border,
     flexDirection: 'row',
     zIndex: 100,
   },
@@ -67,15 +67,12 @@ const styles = StyleSheet.create({
   },
   tabActive: {
     borderTopWidth: 2,
-    borderTopColor: AppColors.primary,
   },
   label: {
     fontSize: 11,
-    color: AppColors.textMuted,
     fontWeight: '500',
   },
   labelActive: {
-    color: AppColors.primary,
     fontWeight: '600',
   },
 });

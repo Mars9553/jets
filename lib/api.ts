@@ -27,8 +27,11 @@ function getApiUrl(): string {
     }
   }
 
-  // Web browser or emulator — localhost is reachable
-  return 'http://localhost:3001';
+  if (__DEV__) {
+    return 'http://localhost:3001';
+  }
+
+  return '';
 }
 
 export const API_URL = getApiUrl();
@@ -59,6 +62,7 @@ export interface NoticeItem {
   id: string;
   category: string;
   title: string;
+  summary?: string;
   description: string;
   date: string;
   createdAt?: string;
@@ -90,39 +94,54 @@ export interface EventItem {
   organizer?: string;
   comments: number;
   likes: number;
+  liked?: boolean;
   attending: number;
   userAttending: boolean;
 }
+
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 1000;
 
 async function request<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), 3 * 60 * 1000); // 3 minutes
 
-  try {
-    const res = await fetch(`${API_URL}${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-      signal: controller.signal,
-    });
+  let lastError: any;
 
-    clearTimeout(id);
-    const data = await res.json();
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      const res = await fetch(`${API_URL}${endpoint}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+        signal: controller.signal,
+      });
 
-    if (!res.ok) {
-      throw new Error(data.error || `Request failed (${res.status})`);
+      clearTimeout(id);
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.error || `Request failed (${res.status})`);
+      }
+
+      return data as T;
+    } catch (error: any) {
+      clearTimeout(id);
+      if (error.name === 'AbortError') {
+        throw new Error('Request timed out after 3 minutes. Please check if your server is running and accessible.');
+      }
+      lastError = error;
+      if (attempt < MAX_RETRIES) {
+        await new Promise(resolve => setTimeout(resolve, RETRY_DELAY_MS * (attempt + 1)));
+      }
     }
-
-    return data as T;
-  } catch (error: any) {
-    clearTimeout(id);
-    if (error.name === 'AbortError') {
-      throw new Error('Request timed out after 3 minutes. Please check if your server is running and accessible.');
-    }
-    throw error;
   }
+
+  throw lastError?.message?.includes('Failed to fetch')
+    ? new Error('Unable to connect to the server. Please make sure the API server is running.')
+    : lastError;
 }
 
 export const api = {

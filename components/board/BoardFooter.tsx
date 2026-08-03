@@ -1,74 +1,75 @@
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Bell } from 'lucide-react-native';
-import { AppColors, Layout, Radius, Spacing } from '@/constants/theme';
+import { Layout, Radius, Spacing } from '@/constants/theme';
+import { useTheme } from '@/context/ThemeContext';
 
 export function BoardFooter() {
   const router = useRouter();
+  const { colors } = useTheme();
+  const s = styles(colors);
 
   return (
-    <View style={styles.footer}>
-      <View style={styles.inner}>
+    <View style={[s.footer, { backgroundColor: colors.borderLight, borderTopColor: colors.border }]}>
+      <View style={s.inner}>
         {/* Brand Info */}
-        <View style={styles.col}>
-          <View style={styles.brandRow}>
-            <View style={styles.logo}>
-              <Bell size={14} color={AppColors.surface} />
+        <View style={s.col}>
+          <View style={s.brandRow}>
+            <View style={[s.logo, { backgroundColor: colors.primary }]}>
+              <Bell size={14} color={colors.surface} />
             </View>
-            <Text style={styles.brandName}>Digital Bulletin Board</Text>
+            <Text style={[s.brandName, { color: colors.textSecondary }]}>Digital Bulletin Board</Text>
           </View>
-          <Text style={styles.tagline}>
+          <Text style={[s.tagline, { color: colors.textMuted }]}>
             Your central hub for campus announcements, schedules, and events.
           </Text>
         </View>
 
         {/* Quick Links */}
-        <View style={styles.col}>
-          <Text style={styles.colTitle}>Quick Links</Text>
+        <View style={s.col}>
+          <Text style={[s.colTitle, { color: colors.textSecondary }]}>Quick Links</Text>
           <TouchableOpacity onPress={() => router.push('/user_notice' as any)} activeOpacity={0.7}>
-            <Text style={styles.link}>Notice Board</Text>
+            <Text style={[s.link, { color: colors.textMuted }]}>Notice Board</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/event_page' as any)} activeOpacity={0.7}>
-            <Text style={styles.link}>Events</Text>
+            <Text style={[s.link, { color: colors.textMuted }]}>Events</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => router.push('/profile' as any)} activeOpacity={0.7}>
-            <Text style={styles.link}>My Profile</Text>
+            <Text style={[s.link, { color: colors.textMuted }]}>My Profile</Text>
           </TouchableOpacity>
         </View>
 
         {/* Social / Connect */}
-        <View style={styles.col}>
-          <Text style={styles.colTitle}>Connect With Us</Text>
-          <Text style={styles.socialTagline}>Stay updated on university social media.</Text>
-          <View style={styles.socialRow}>
-            <TouchableOpacity style={styles.socialIcon} activeOpacity={0.7}>
-              <Text style={styles.socialText}>IG</Text>
+        <View style={s.col}>
+          <Text style={[s.colTitle, { color: colors.textSecondary }]}>Connect With Us</Text>
+          <Text style={[s.socialTagline, { color: colors.textMuted }]}>Stay updated on university social media.</Text>
+          <View style={s.socialRow}>
+            <TouchableOpacity style={[s.socialIcon, { backgroundColor: colors.surface, borderColor: colors.border }]} activeOpacity={0.7}>
+              <Text style={[s.socialText, { color: colors.textMuted }]}>IG</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialIcon} activeOpacity={0.7}>
-              <Text style={styles.socialText}>X</Text>
+            <TouchableOpacity style={[s.socialIcon, { backgroundColor: colors.surface, borderColor: colors.border }]} activeOpacity={0.7}>
+              <Text style={[s.socialText, { color: colors.textMuted }]}>X</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.socialIcon} activeOpacity={0.7}>
-              <Text style={styles.socialText}>IN</Text>
+            <TouchableOpacity style={[s.socialIcon, { backgroundColor: colors.surface, borderColor: colors.border }]} activeOpacity={0.7}>
+              <Text style={[s.socialText, { color: colors.textMuted }]}>IN</Text>
             </TouchableOpacity>
           </View>
         </View>
       </View>
 
-      <View style={styles.bottomBar}>
-        <View style={styles.bottomBarInner}>
-          <Text style={styles.copyright}>© 2026 Digital Bulletin Board. All rights reserved.</Text>
-          <Text style={styles.credit}>Designed with care for students</Text>
+      <View style={[s.bottomBar, { borderTopColor: colors.border }]}>
+        <View style={s.bottomBarInner}>
+          <Text style={[s.copyright, { color: colors.textPlaceholder }]}>© 2026 Digital Bulletin Board. All rights reserved.</Text>
+          <Text style={[s.credit, { color: colors.textPlaceholder }]}>Designed with care for students</Text>
         </View>
       </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   footer: {
-    backgroundColor: AppColors.borderLight, // Soft light-grey background (e.g. #f1f5f9)
     borderTopWidth: 1,
-    borderTopColor: AppColors.border, // #e2e8f0 border
     width: '100%',
     marginTop: Spacing.xl,
   },
@@ -95,35 +96,29 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   logo: {
-    backgroundColor: AppColors.primary,
     padding: 5,
     borderRadius: Radius.sm - 2,
   },
   brandName: {
     fontWeight: '700',
     fontSize: 14,
-    color: AppColors.textSecondary, // #1e293b
   },
   tagline: {
     fontSize: 13,
-    color: AppColors.textMuted, // #64748b
     lineHeight: 20,
     maxWidth: 280,
   },
   colTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: AppColors.textSecondary, // #1e293b
     marginBottom: 4,
   },
   link: {
     fontSize: 13,
-    color: AppColors.textMuted, // #64748b
     paddingVertical: 3,
   },
   socialTagline: {
     fontSize: 13,
-    color: AppColors.textMuted, // #64748b
     marginBottom: 2,
   },
   socialRow: {
@@ -135,20 +130,16 @@ const styles = StyleSheet.create({
     width: 34,
     height: 34,
     borderRadius: Radius.sm,
-    backgroundColor: AppColors.surface, // #ffffff
     borderWidth: 1,
-    borderColor: AppColors.border, // #e2e8f0
     alignItems: 'center',
     justifyContent: 'center',
   },
   socialText: {
     fontSize: 11,
     fontWeight: '700',
-    color: AppColors.textMuted, // #64748b
   },
   bottomBar: {
     borderTopWidth: 1,
-    borderTopColor: AppColors.border,
     width: '100%',
     alignItems: 'center',
   },
@@ -164,10 +155,8 @@ const styles = StyleSheet.create({
   },
   copyright: {
     fontSize: 12,
-    color: AppColors.textPlaceholder, // #94a3b8
   },
   credit: {
     fontSize: 12,
-    color: AppColors.textPlaceholder, // #94a3b8
   },
 });

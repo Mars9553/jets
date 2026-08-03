@@ -1,7 +1,8 @@
 import { View, Text, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Heart, MessageSquare } from 'lucide-react-native';
-import { AppColors, Radius, Spacing } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { TargetType } from '@/lib/api';
+import { useTheme } from '@/context/ThemeContext';
 
 type EngagementBarProps = {
   targetType: TargetType;
@@ -22,40 +23,43 @@ export function EngagementBar({
   onPressComments,
   onToggleLike,
 }: EngagementBarProps) {
+  const { colors } = useTheme();
+  const s = styles(colors);
+
   return (
-    <View style={styles.row}>
+    <View style={s.row}>
       <TouchableOpacity
-        style={styles.statBtn}
+        style={s.statBtn}
         onPress={onPressComments}
         activeOpacity={0.7}
         disabled={!onPressComments}
       >
-        <MessageSquare size={15} color={AppColors.textPlaceholder} />
-        <Text style={styles.statText}>{comments}</Text>
+        <MessageSquare size={15} color={colors.textPlaceholder} />
+        <Text style={[s.statText, { color: colors.textPlaceholder }]}>{comments}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.statBtn}
+        style={s.statBtn}
         onPress={onToggleLike}
         activeOpacity={0.7}
         disabled={loading}
       >
         {loading ? (
-          <ActivityIndicator size="small" color={AppColors.primary} />
+          <ActivityIndicator size="small" color={colors.primary} />
         ) : (
           <Heart
             size={15}
-            color={liked ? '#ef4444' : AppColors.textPlaceholder}
+            color={liked ? '#ef4444' : colors.textPlaceholder}
             fill={liked ? '#ef4444' : 'transparent'}
           />
         )}
-        <Text style={[styles.statText, liked && styles.likedText]}>{likes}</Text>
+        <Text style={[s.statText, liked && s.likedText, { color: liked ? '#ef4444' : colors.textPlaceholder }]}>{likes}</Text>
       </TouchableOpacity>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.create({
   row: {
     flexDirection: 'row',
     gap: Spacing.md - 4,
@@ -68,7 +72,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 2,
   },
   statText: {
-    color: AppColors.textPlaceholder,
     fontSize: 13,
     fontWeight: '500',
   },

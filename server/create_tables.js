@@ -19,16 +19,17 @@ const STATEMENTS = [
     created_at TIMESTAMPTZ DEFAULT NOW()
   )`,
   // Notices
-  `CREATE TABLE IF NOT EXISTS notices (
-    id SERIAL PRIMARY KEY,
-    legacy_id TEXT UNIQUE NOT NULL,
-    category TEXT NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT NOT NULL,
-    date TEXT NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
-    updated_at TIMESTAMPTZ DEFAULT NOW()
-  )`,
+   `CREATE TABLE IF NOT EXISTS notices (
+     id SERIAL PRIMARY KEY,
+     legacy_id TEXT UNIQUE NOT NULL,
+     category TEXT NOT NULL,
+     title TEXT NOT NULL,
+     description TEXT NOT NULL,
+     summary TEXT,
+     date TEXT NOT NULL,
+     created_at TIMESTAMPTZ DEFAULT NOW(),
+     updated_at TIMESTAMPTZ DEFAULT NOW()
+   )`,
 
   // Events
   `CREATE TABLE IF NOT EXISTS events (
