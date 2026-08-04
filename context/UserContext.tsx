@@ -18,6 +18,21 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let isMounted = true;
+    const startedAt = Date.now();
+    const MIN_LOADING_MS = 1500;
+    const MAX_LOADING_MS = 3000;
+
+    const resolveLoading = () => {
+      if (!isMounted) return;
+      const elapsed = Date.now() - startedAt;
+      if (elapsed >= MIN_LOADING_MS) {
+        setLoading(false);
+      } else {
+        setTimeout(() => {
+          if (isMounted) setLoading(false);
+        }, MIN_LOADING_MS - elapsed);
+      }
+    };
 
     AsyncStorage.getItem(STORAGE_KEY)
       .then((raw) => {
@@ -34,12 +49,12 @@ export function UserProvider({ children }: { children: React.ReactNode }) {
         // ignore storage errors (e.g. private browsing / unavailable storage)
       })
       .finally(() => {
-        if (isMounted) setLoading(false);
+        resolveLoading();
       });
 
     const timeout = setTimeout(() => {
       if (isMounted) setLoading(false);
-    }, 3000);
+    }, MAX_LOADING_MS);
 
     return () => {
       isMounted = false;

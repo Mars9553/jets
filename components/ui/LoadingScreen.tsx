@@ -39,12 +39,12 @@ export function LoadingScreen({ message = 'Loading portal...' }: LoadingScreenPr
       const opacity = new Animated.Value(0.7);
       setRings((prev) => [...prev, { id, scale, opacity }]);
       Animated.parallel([
-        Animated.timing(scale, { toValue: 5, duration: 2400, useNativeDriver: true }),
-        Animated.timing(opacity, { toValue: 0, duration: 2400, useNativeDriver: true }),
+        Animated.timing(scale, { toValue: 5, duration: 1800, useNativeDriver: true }),
+        Animated.timing(opacity, { toValue: 0, duration: 1800, useNativeDriver: true }),
       ]).start(() => {
         setRings((prev) => prev.filter((r) => r.id !== id));
       });
-    }, 900);
+    }, 700);
     return () => clearInterval(interval);
   }, []);
 
