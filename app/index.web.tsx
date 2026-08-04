@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useRouter } from 'expo-router';
 import { useUser } from '@/context/UserContext';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 import '../styles/tailwind-output.css';
 
 export default function LandingPage() {
@@ -15,11 +16,7 @@ export default function LandingPage() {
   }, [user, loading]);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-50 text-slate-500 font-sans">
-        <div className="text-base">Loading portal...</div>
-      </div>
-    );
+    return <LoadingScreen message="Loading portal..." />;
   }
 
   return (

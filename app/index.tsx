@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, StatusBar } fro
 import { useRouter } from 'expo-router';
 import { useUser } from '@/context/UserContext';
 import { AppColors, Radius, Spacing, Shadow } from '@/constants/theme';
+import { LoadingScreen } from '@/components/ui/LoadingScreen';
 
 export default function LandingPage() {
   const { user, loading } = useUser();
@@ -15,14 +16,7 @@ export default function LandingPage() {
   }, [user, loading]);
 
   if (loading) {
-    return (
-      <SafeAreaView style={nativeStyles.container}>
-        <StatusBar barStyle="dark-content" />
-        <View style={nativeStyles.loadingContainer}>
-          <Text style={nativeStyles.loadingText}>Loading portal...</Text>
-        </View>
-      </SafeAreaView>
-    );
+    return <LoadingScreen message="Loading portal..." />;
   }
 
   return (
