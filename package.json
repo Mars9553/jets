@@ -1,9 +1,9 @@
 {
   "name": "e-board",
-  "main": "expo-router/entry",
+  "main": "server/index.js",
   "version": "1.0.0",
   "scripts": {
-    "start": "npx expo start",
+    "start": "node server/index.js",
     "reset-project": "node ./scripts/reset-project.js",
     "android": "npx expo run:android",
     "ios": "npx expo run:ios",
@@ -12,7 +12,8 @@
     "dev": "concurrently --names \"WEB,CSS\" --prefix-colors \"cyan,blue\" \"npm run web\" \"npx @tailwindcss/cli -i ./styles/global.css -o ./styles/tailwind-output.css --watch\"",
     "seed": "node server/seed.js",
     "lint": "npx expo lint",
-    "build": "npx expo export --platform web"
+    "build": "npx expo export --platform web",
+    "build:cloudflare": "npm run build && node scripts/copy-redirects.js"
   },
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
