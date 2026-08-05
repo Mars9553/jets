@@ -70,6 +70,14 @@ function computeStatus(dateStr) {
 }
 
 function formatEvent(doc) {
+  const parseJsonArray = (value) => {
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') {
+      try { return JSON.parse(value); } catch { return []; }
+    }
+    return value ?? [];
+  };
+
   return {
     id: doc.legacy_id,
     title: doc.title,
@@ -81,8 +89,8 @@ function formatEvent(doc) {
     status: computeStatus(doc.date),   // Always computed fresh, never stale
     category: doc.category,
     image: doc.image,
-    gallery: doc.gallery ?? [],
-    highlights: doc.highlights ?? [],
+    gallery: parseJsonArray(doc.gallery),
+    highlights: parseJsonArray(doc.highlights),
     organizer: doc.organizer,
     comments: doc.comments ?? 0,
     likes: doc.likes ?? 0,
