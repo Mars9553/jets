@@ -14,7 +14,7 @@ const NAV_ITEMS: { key: NavRoute; label: string; href: string; icon: typeof Bell
 ];
 
 function resolveActive(pathname: string): NavRoute {
-  if (pathname.includes('profile')) return 'profile';
+  if (pathname.includes('profile') || pathname.includes('help')) return 'profile';
   if (pathname.includes('event')) return 'events';
   return 'notices';
 }

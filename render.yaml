@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: e-board
+    env: node
+    plan: free
+    buildCommand: npm install && npm run build
+    startCommand: node server/index.js
+    envVars:
+      - key: NODE_VERSION
+        value: 24.x
+      - key: SUPABASE_URL
+        value: https://ypeazvixfahfhnonqqra.supabase.co
+      - key: SUPABASE_SECRET_KEY
+        value: <set in Render dashboard>
+      - key: SUPABASE_PUBLISHABLE_KEY
+        value: sb_publishable_7FY-JzvX35AnobdxBPKudA_mjhpYgXm

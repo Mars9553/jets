@@ -26,6 +26,8 @@ import {
   Sun,
   Laptop,
   ChevronDown,
+  Smartphone,
+  Download,
 } from 'lucide-react-native';
 import { BoardNavbar } from '@/components/board/BoardNavbar';
 import { BoardFooter } from '@/components/board/BoardFooter';
@@ -33,14 +35,18 @@ import { BottomTabs, BOTTOM_TAB_HEIGHT } from '@/components/board/BottomTabs';
 import { Layout, Radius, Shadow, Spacing } from '@/constants/theme';
 import { useUser } from '@/context/UserContext';
 import { useTheme } from '@/context/ThemeContext';
+import { useToast } from '@/context/ToastContext';
 import { api } from '@/lib/api';
 import { getReadIds } from '@/lib/readReceipts';
 import { triggerLocalNotification } from '@/lib/notifications';
+import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 
 export default function ProfileScreen() {
   const router = useRouter();
   const { user, setUser } = useUser();
   const { colors, mode, setMode } = useTheme();
+  const { showToast } = useToast();
+  const { canInstall, promptInstall } = useInstallPrompt();
   const s = useMemo(() => styles(colors), [colors]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [readCount, setReadCount] = useState(0);
@@ -284,6 +290,7 @@ export default function ProfileScreen() {
                   'Test Notification',
                   'This is a test notification from E-Board!'
                 );
+                showToast('Test notification sent', 'info');
               }}
             >
               <View style={s.prefLeft}>
@@ -315,7 +322,11 @@ export default function ProfileScreen() {
 
             <View style={s.divider} />
 
-            <TouchableOpacity style={s.prefRowButton} activeOpacity={0.7}>
+            <TouchableOpacity 
+                style={s.prefRowButton} 
+                activeOpacity={0.7}
+                onPress={() => router.push('/help' as any)}
+              >
               <View style={s.prefLeft}>
                 <View style={[s.infoIconWrapper, { backgroundColor: '#fef9c3' }]}>
                   <HelpCircle size={18} color="#ca8a04" />
@@ -328,6 +339,44 @@ export default function ProfileScreen() {
               <ChevronRight size={18} color={colors.textPlaceholder} />
             </TouchableOpacity>
           </View>
+
+          {Platform.OS === 'web' && (
+            <View style={s.infoCard}>
+              <TouchableOpacity
+                style={s.prefRowButton}
+                activeOpacity={0.7}
+                onPress={async () => {
+                  if (canInstall) {
+                    const accepted = await promptInstall();
+                    showToast(
+                      accepted ? 'Installation started' : 'Installation cancelled',
+                      accepted ? 'success' : 'info'
+                    );
+                  } else {
+                    showToast(
+                      'Use your browser menu: Share > Add to Home Screen',
+                      'info'
+                    );
+                  }
+                }}
+              >
+                <View style={s.prefLeft}>
+                  <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
+                    <Smartphone size={18} color={colors.primary} />
+                  </View>
+                  <View style={s.infoContent}>
+                    <Text style={s.prefTitle}>Install on Device</Text>
+                    <Text style={s.prefSubtitle}>
+                      {canInstall
+                        ? 'Add E-Board to your home screen'
+                        : 'Add to home screen for quick access'}
+                    </Text>
+                  </View>
+                </View>
+                <Download size={18} color={colors.textPlaceholder} />
+              </TouchableOpacity>
+            </View>
+          )}
 
           {/* Logout Action */}
           <TouchableOpacity

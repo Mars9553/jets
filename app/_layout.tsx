@@ -4,10 +4,30 @@ import { StatusBar } from 'expo-status-bar';
 import { Platform } from 'react-native';
 import { UserProvider, useUser } from '@/context/UserContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
-import { registerForNotificationsAsync } from '@/lib/notifications';
-import { ToastProvider } from '@/context/ToastContext';
+import { ToastProvider, useToast } from '@/context/ToastContext';
+import { registerForNotificationsAsync, WEB_NOTIFICATION_EVENT } from '@/lib/notifications';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { OfflineScreen } from '@/components/ui/OfflineScreen';
+
+function WebNotificationListener() {
+  const { showToast } = useToast();
+
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const handler = (event: CustomEvent) => {
+      const { title, body } = event.detail || {};
+      if (title && body) {
+        showToast(`${title}: ${body}`, 'info');
+      }
+    };
+    window.addEventListener(WEB_NOTIFICATION_EVENT, handler as EventListener);
+    return () => {
+      window.removeEventListener(WEB_NOTIFICATION_EVENT, handler as EventListener);
+    };
+  }, [showToast]);
+
+  return null;
+}
 
 function NavigationGate() {
   const { user, loading } = useUser();
@@ -58,6 +78,7 @@ export default function RootLayout() {
       <ToastProvider>
         <ThemeProvider>
           <StatusBar style="dark" />
+          <WebNotificationListener />
           <AppContent />
         </ThemeProvider>
       </ToastProvider>

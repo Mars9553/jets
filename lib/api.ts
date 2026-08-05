@@ -122,7 +122,14 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
       });
 
       clearTimeout(id);
-      const data = await res.json();
+
+      let data: any;
+      try {
+        data = await res.json();
+      } catch {
+        const text = await res.text().catch(() => '');
+        data = text ? { error: text } : {};
+      }
 
       if (!res.ok) {
         throw new Error(data.error || `Request failed (${res.status})`);
