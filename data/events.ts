@@ -20,6 +20,9 @@ export interface CampusEvent {
   userAttending: boolean;
 }
 
+const PEXELS = (id: string) =>
+  `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?w=800&q=80`;
+
 export const EVENTS: CampusEvent[] = [
   {
     id: '1',
@@ -33,14 +36,14 @@ export const EVENTS: CampusEvent[] = [
     venue: 'RSU Main Campus & Port Harcourt',
     status: 'upcoming',
     category: 'Social',
-    image: 'https://source.unsplash.com/800x600/?nigerian,students,university,port-harcourt',
+    image: PEXELS('37420616'),
     gallery: [
-      'https://source.unsplash.com/800x600/?nigerian,students,celebration',
-      'https://source.unsplash.com/800x600/?african,university,campus',
-      'https://source.unsplash.com/800x600/?nigerian,students,parade',
-      'https://source.unsplash.com/800x600/?port-harcourt,students',
-      'https://source.unsplash.com/800x600/?african,youth,gathering',
-      'https://source.unsplash.com/800x600/?nigerian,students,event',
+      PEXELS('36036166'),
+      PEXELS('36703064'),
+      PEXELS('35758949'),
+      PEXELS('37410975'),
+      PEXELS('30052431'),
+      PEXELS('35973249'),
     ],
     highlights: [
       'SUG Week Flag-Off',
@@ -71,10 +74,10 @@ export const EVENTS: CampusEvent[] = [
     venue: 'Senate Chamber, Admin Block',
     status: 'past',
     category: 'Academic',
-    image: 'https://images.pexels.com/photos/16629768/pexels-photo-16629768.jpeg?w=800&q=80',
+    image: PEXELS('16629768'),
     gallery: [
-      'https://images.pexels.com/photos/34594743/pexels-photo-34594743.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/31367502/pexels-photo-31367502.jpeg?w=800&q=80',
+      PEXELS('34594743'),
+      PEXELS('31367502'),
     ],
     highlights: ['Inaugural lecture', 'Faculty procession', 'Light reception', 'Guest speakers'],
     organizer: 'Office of the Vice-Chancellor',
@@ -95,10 +98,10 @@ export const EVENTS: CampusEvent[] = [
     venue: 'Faculty of Science Hall',
     status: 'past',
     category: 'Career',
-    image: 'https://images.pexels.com/photos/5965674/pexels-photo-5965674.jpeg?w=800&q=80',
+    image: PEXELS('5965674'),
     gallery: [
-      'https://images.pexels.com/photos/5940710/pexels-photo-5940710.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/12286603/pexels-photo-12286603.jpeg?w=800&q=80',
+      PEXELS('5940710'),
+      PEXELS('12286603'),
     ],
     highlights: ['On-the-spot interviews', 'CV review desk', '40+ company booths', 'Networking lounge'],
     organizer: 'Career Services Unit',
@@ -119,10 +122,10 @@ export const EVENTS: CampusEvent[] = [
     venue: 'Sports Complex & Health Centre',
     status: 'upcoming',
     category: 'Health',
-    image: 'https://images.pexels.com/photos/34594743/pexels-photo-34594743.jpeg?w=800&q=80',
+    image: PEXELS('31743031'),
     gallery: [
-      'https://images.pexels.com/photos/31367502/pexels-photo-31367502.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/34379888/pexels-photo-34379888.jpeg?w=800&q=80',
+      PEXELS('34379888'),
+      PEXELS('6238043'),
     ],
     highlights: ['Yoga & meditation', 'Free health checks', 'Counselling sessions', 'Healthy snacks'],
     organizer: 'University Health Services',
@@ -143,10 +146,10 @@ export const EVENTS: CampusEvent[] = [
     venue: 'IT Innovation Hub',
     status: 'upcoming',
     category: 'Technology',
-    image: 'https://images.pexels.com/photos/5940710/pexels-photo-5940710.jpeg?w=800&q=80',
+    image: PEXELS('5940705'),
     gallery: [
-      'https://images.pexels.com/photos/5940705/pexels-photo-5940705.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/12286603/pexels-photo-12286603.jpeg?w=800&q=80',
+      PEXELS('5940834'),
+      PEXELS('11025019'),
     ],
     highlights: ['Live project demos', 'Startup pitches', 'Workshop sessions', 'Networking with alumni'],
     organizer: 'Faculty of Computing',
@@ -167,10 +170,10 @@ export const EVENTS: CampusEvent[] = [
     venue: 'University Auditorium',
     status: 'past',
     category: 'Academic',
-    image: 'https://images.pexels.com/photos/30243808/pexels-photo-30243808.jpeg?w=800&q=80',
+    image: PEXELS('30243808'),
     gallery: [
-      'https://images.pexels.com/photos/34338061/pexels-photo-34338061.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/34850197/pexels-photo-34850197.jpeg?w=800&q=80',
+      PEXELS('34338061'),
+      PEXELS('34850197'),
     ],
     highlights: ['Matriculation oath', 'VC address', 'Faculty introductions', 'Group photo'],
     organizer: 'Registry & Academic Affairs',
