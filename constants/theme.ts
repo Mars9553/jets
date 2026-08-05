@@ -41,6 +41,7 @@ export const AppColors = {
   success: '#16a34a',
   successBg: '#f0fdf4',
   successBorder: '#dcfce7',
+  overlay: 'rgba(15, 23, 42, 0.45)',
   category: {
     General: { bg: '#e0f2fe', text: '#0369a1' },
     Academic: { bg: '#ede9fe', text: '#6d28d9' },

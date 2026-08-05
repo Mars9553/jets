@@ -36,6 +36,7 @@ const darkColors = {
   success: '#4ade80',
   successBg: '#052e16',
   successBorder: '#14532d',
+  overlay: 'rgba(0, 0, 0, 0.55)',
   category: {
     General: { bg: '#164e63', text: '#67e8f9' },
     Academic: { bg: '#4c1d95', text: '#c4b5fd' },

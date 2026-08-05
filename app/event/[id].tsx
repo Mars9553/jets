@@ -110,8 +110,29 @@ export default function EventDetailScreen() {
             <Text style={[s.backLink, { color: colors.primary }]}>Back to events</Text>
           </TouchableOpacity>
 
-          <Text style={[s.title, { color: colors.text }]}>{event.title}</Text>
-          <Text style={[s.description, { color: colors.textMuted }]}>{event.description}</Text>
+          {event.image ? (
+            <View style={s.coverWrap}>
+              <Image
+                source={{ uri: event.image }}
+                style={s.coverImage}
+                contentFit="cover"
+                transition={200}
+              />
+              <View style={[s.coverOverlay, { backgroundColor: colors.overlay }]} />
+              <View style={s.coverContent}>
+                <View style={[s.statusPill, { backgroundColor: colors.surface }]}>
+                  <Text style={[s.statusPillText, { color: colors.primary }]}>{statusLabel} Event</Text>
+                </View>
+                <Text style={[s.title, { color: '#fff' }]}>{event.title}</Text>
+              </View>
+            </View>
+          ) : (
+            <Text style={[s.title, { color: colors.text }]}>{event.title}</Text>
+          )}
+
+          {!event.image && (
+            <Text style={[s.description, { color: colors.textMuted }]}>{event.description}</Text>
+          )}
 
           <EngagementBar
             targetType="event"
@@ -187,6 +208,10 @@ export default function EventDetailScreen() {
             </View>
           </View>
 
+          {event.image && (
+            <Text style={[s.description, { color: colors.textMuted }]}>{event.description}</Text>
+          )}
+
           <CommentsPanel
             targetType="event"
             targetId={event.id}
@@ -239,6 +264,40 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
   backLink: {
     fontWeight: '600',
     fontSize: 14,
+  },
+  coverWrap: {
+    width: '100%',
+    height: 260,
+    borderRadius: Radius.lg,
+    overflow: 'hidden',
+    marginBottom: Spacing.lg,
+    ...Shadow.card,
+  },
+  coverImage: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
+  coverOverlay: {
+    position: 'absolute',
+    inset: 0,
+    borderRadius: Radius.lg,
+  },
+  coverContent: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    padding: Spacing.lg,
+    gap: Spacing.sm + 4,
+  },
+  statusPill: {
+    alignSelf: 'flex-start',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: Radius.sm,
+  },
+  statusPillText: {
+    fontSize: 12,
+    fontWeight: '700',
   },
   title: {
     fontSize: 26,

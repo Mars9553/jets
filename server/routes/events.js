@@ -48,16 +48,19 @@ router.get('/:id', async (req, res, next) => {
  * Computes the real-time event status from the date string.
  * The stored `status` column is ignored — it gets stale as time passes.
  *
- * "Jan 8, 2026" style strings are supported by the JS Date parser.
+ * Supports:
+ *  - "Jan 8, 2026"
+ *  - "Jun 15 - Jun 20, 2026"
+ *  - "Jun 15, 2026 - Jun 20, 2026"
  */
 function computeStatus(dateStr) {
   if (!dateStr) return 'upcoming';
 
-  const eventDate = new Date(dateStr);
-  if (isNaN(eventDate.getTime())) return 'upcoming'; // Unparseable → assume upcoming
+  const cleaned = dateStr.split('-')[0].trim();
+  const eventDate = new Date(cleaned);
+  if (isNaN(eventDate.getTime())) return 'upcoming';
 
   const now = new Date();
-  // Compare calendar days only (strip time)
   const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const eventMidnight = new Date(eventDate.getFullYear(), eventDate.getMonth(), eventDate.getDate());
 
