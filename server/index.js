@@ -107,7 +107,31 @@ async function autoSeed() {
     }
   } else {
     console.log('Database already has notices, skipping seed.');
+    await updateEventImages();
   }
+}
+
+async function updateEventImages() {
+  const supabase = getSupabase();
+
+  for (const event of SEED_EVENTS) {
+    try {
+      const { error } = await supabase
+        .from('events')
+        .update({ image: event.image, gallery: event.gallery })
+        .eq('legacy_id', event.legacyId);
+
+      if (error) {
+        console.warn(`Failed to update images for event ${event.legacyId}:`, error.message);
+      } else {
+        console.log(`Updated images for event "${event.title}" (legacy_id: ${event.legacyId})`);
+      }
+    } catch (err) {
+      console.warn(`Error updating event ${event.legacyId}:`, err.message);
+    }
+  }
+
+  console.log('Event image update complete.');
 }
 
 async function start() {
