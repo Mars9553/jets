@@ -170,10 +170,10 @@ const SEED_EVENTS = [
     venue: 'IT Innovation Hub',
     status: 'upcoming',
     category: 'Technology',
-    image: 'https://images.pexels.com/photos/5940705/pexels-photo-5940705.jpeg?w=800&q=80',
+    image: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/tech_expo/tech_expo_1.jpg',
     gallery: [
-      'https://images.pexels.com/photos/5940834/pexels-photo-5940834.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/37811192/pexels-photo-37811192.jpeg?w=800&q=80',
+      'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/tech_expo/tech_expo_2.png',
+      'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/tech_expo/tech_expo_3.jpg',
     ],
     highlights: ['Live project demos', 'Startup pitches', 'Workshop sessions', 'Networking with alumni'],
     organizer: 'Faculty of Computing',
