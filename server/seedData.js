@@ -12,21 +12,22 @@ const SEED_NOTICES = [
   {
     legacyId: '2',
     category: 'Academic',
-    title: 'Level 100 Orientation Schedule',
+    title: 'Academic Calendar for the Second Semester (2025/2026 Academic Session)',
     summary:
-      'All Level 100 students must attend a mandatory three-day orientation program. The program covers registration, campus tours, and academic advising. It runs from February 15–17, 2026 and attendance is compulsory.',
+      'The Second Semester of the 2025/2026 academic session begins with lectures running from Monday, April 6 to Friday, June 26, 2026, alongside the submission of First Semester examination results between March 30 and April 13, 2026. The annual Students\' Week will take place from Monday, June 8 to Saturday, June 13, 2026. Examinations will follow in batches: Year 4 and 5 students write from July 6 to July 10, Year 2 and 3 students from July 13 to July 17 (and continuing July 27 to July 31), Year 1 students from July 20 to July 24, and BMAS students (Years 1, 2, and 3) from August 3 to August 7, 2026.',
     description:
-      'All Level 100 students are required to attend the mandatory orientation program scheduled from February 15–17, 2026.\n\nThe program is designed to help new students settle in quickly and become acquainted with university life. The schedule is as follows:\n\nDay 1 — Registration & Campus Welcome (Feb 15, 9:00 AM – 4:00 PM)\n• Document verification and ID card issuance at the Main Hall\n• Welcome address by the Vice-Chancellor\n• Campus tour in assigned faculty groups\n\nDay 2 — Academic Advising & Systems Orientation (Feb 16, 9:00 AM – 4:00 PM)\n• Departmental orientation and course registration guidance\n• Library and ICT resources workshop\n• Introduction to the student portal and learning management system\n\nDay 3 — Student Life & Clubs Fair (Feb 17, 9:00 AM – 3:00 PM)\n• Student organisations and society fair at the Sports Complex\n• Closing ceremony and pledge\n\nAttendance is compulsory for all newly admitted Level 100 students. Any student who cannot attend must obtain prior approval from the Dean of Student Affairs.',
+      'Following the examination period, Second Semester results are scheduled for submission between Monday, August 10 and Friday, August 21, 2026, with Project Defenses (External Examinations) set for August 12 to August 14, 2026. Faculty Board and related meetings to consider both First and Second Semester results will hold from August 24 to August 28, 2026, leading up to the Senate Meeting on Thursday, September 24, 2026, to finalize the results. The 2025/2026 academic session will officially conclude on Friday, September 25, 2026, followed by the end-of-session vacation running from Saturday, September 26 to Saturday, October 17, 2026.',
     date: 'Jan 8, 2026',
+    imageUrl: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/notice-images/academic_calendar.jpg',
   },
   {
     legacyId: '3',
     category: 'General',
-    title: 'Course Registration Deadline',
+    title: 'Course registration for the second semester',
     summary:
-      'Course registration for the 2026 semester ends May 20, 2026. Students are advised to complete their selections early through the student portal. Late registration will incur additional fees and may restrict course selection.',
+      'Course registration for the second semester officially commenced in July for continuing students. To complete this process and maintain academic standing, students are required to settle all outstanding school fee payments in full. Failure to clear these financial obligations will restrict students from registering for their modules and render them ineligible to write the upcoming second-semester examinations.',
     description:
-      'Course registration ends May 20, 2026. Late registration will incur additional fees.\n\nAll registered students are advised to complete their course selections via the student portal before the deadline on Wednesday, May 20, 2026, at 11:59 PM.\n\nKey points:\n• Late submissions made between May 21 and May 27 will attract a fee of GHC 150.\n• No registrations will be accepted after May 27, 2026.\n• Students on academic probation must seek approval from their faculty academic advisor before registering.\n• Students changing programmes must submit a programme change request form to the Registrar before the deadline.\n\nCourse timetables and availability are published on the portal. Students are encouraged to register early to avoid congestion and secure preferred slot combinations.\n\nFor technical issues with the portal, contact the ICT Helpdesk at helpdesk@university.edu.',
+      'Students are strongly encouraged to finalize their registrations as early as possible to avoid financial penalties. While course enrollment remains open, any late submissions completed after the designated standard deadline will incur late registration fines. Completing both fee payments and course selection promptly ensures uninterrupted access to exam halls and prevents unnecessary additional charges.',
     date: 'Feb 11, 2026',
   },
   {
@@ -52,12 +53,13 @@ const SEED_NOTICES = [
   {
     legacyId: '6',
     category: 'General',
-    title: 'Second Semester Resumption',
+    title: 'School Resumption for 2025/2026',
     summary:
-      'All students are to resume academic activities for the second semester by April 13, 2026. Lectures and scheduled classes will begin on the same day. Students must clear any outstanding fee balances before resumption.',
+      'This official press release from the Office of the Registrar at Rivers State University announces the commencement of academic activities for the 2025/2026 session on Monday, November 3, 2025. In preparation for the new academic year, university management approved the reopening of hostels on Sunday, November 2, 2025, to allow registered students to sign in. Students are urged to pay both their school fees and accommodation fees promptly to ensure they secure a bed space for the upcoming term.',
     description:
-      'All students are to resume academic activities by April 13, 2026.\n\nThis notice applies to all undergraduate, postgraduate, and distance-learning students. The second semester officially begins on Tuesday, April 13, 2026, and all lectures will commence on that day.\n\nImportant reminders for resumption:\n• All fee balances from the first semester must be cleared before resuming.\n• Hostel allocation for continuing residents is automatic; new applicants must apply by April 10, 2026.\n• Students returning from medical leave must submit a fitness certificate to the Student Health Centre before the end of the first week.\n• The Add/Drop window for the second semester will run from April 13 to April 20, 2026.\n\nStudents on academic probation are reminded to report to their faculty academic advisor within 48 hours of resumption for guidance.\n\nFor accommodation enquiries, contact the Accommodation Office. For academic matters, contact your respective faculty office.',
-    date: 'Apr 10, 2026',
+      'This official press release from the Office of the Registrar at Rivers State University announces the commencement of academic activities for the 2025/2026 session on Monday, November 3, 2025.\n\nIn preparation for the new academic year, university management approved the reopening of hostels on Sunday, November 2, 2025, to allow registered students to sign in. Students are urged to pay both their school fees and accommodation fees promptly to ensure they secure a bed space for the upcoming term.\n\nTo oversee bed space allocation and preserve order, Vice-Chancellor Prof. Isaac Zeb-Obipi inaugurated Hall Wardens on October 24, 2025, instructing them to maintain strict hostel discipline. Additionally, the Vice-Chancellor explicitly prohibited the sale or transfer of bed spaces, warning that any student found committing this offense will face appropriate disciplinary measures.\n\nThe document concludes with Registrar Mrs. I. B. S. Harry advising all students to comply fully with these directives for a smooth start to the session.',
+    date: 'Oct 24, 2025',
+    imageUrl: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/notice-images/resumption.jpg',
   },
   {
     legacyId: '7',
@@ -98,20 +100,21 @@ const SEED_EVENTS = [
   },
   {
     legacyId: '2',
-    title: 'Inauguration of Prof. Adebayo Okonkwo',
+    title: '136th Inaugural Lecture of Rivers State University',
     shortDescription:
-      'Formal inauguration ceremony for the newly appointed Professor of Electrical Engineering.',
+      '136th Inaugural Lecture at RSU on effective valuation and property investment governance.',
     description:
-      'The university community is invited to witness the formal inauguration of Prof. Adebayo Okonkwo as Professor of Electrical Engineering.',
-    date: 'Feb 28, 2026',
-    time: '02:00 PM \u2013 05:00 PM',
+      'Rivers State University, Nkpolu-Oroworukwo, Port Harcourt, on Wednesday 29th July, 2026, hosted its 136th Inaugural Lecture, where Professor of Property Investment and Valuation, Prof. Chukwuemeka Edmund Ekenta, declared that effective valuation is the foundation of sustainable property investment and good governance in Nigeria.\n\nDelivering the lecture titled "Valuation as the Fulcrum of Property Investments and Systemic Governance: Inquests from Scholarship"',
+    date: 'Jul 17, 2026',
+    time: '10:00 AM \u2013 12:00 PM',
     venue: 'Senate Chamber, Admin Block',
     status: 'past',
     category: 'Academic',
-    image: 'https://images.pexels.com/photos/16629768/pexels-photo-16629768.jpeg?w=800&q=80',
+    image: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/inauguration/Inauguration_1.jpg',
     gallery: [
-      'https://images.pexels.com/photos/34594743/pexels-photo-34594743.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/31367502/pexels-photo-31367502.jpeg?w=800&q=80',
+      'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/inauguration/Inauguration_2.jpg',
+      'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/inauguration/Inauguration_3.jpg',
+      'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/inauguration/Inauguration_4.jpg',
     ],
     highlights: ['Inaugural lecture', 'Faculty procession', 'Light reception', 'Guest speakers'],
     organizer: 'Office of the Vice-Chancellor',
@@ -148,9 +151,9 @@ const SEED_EVENTS = [
     venue: 'Sports Complex & Health Centre',
     status: 'upcoming',
     category: 'Health',
-    image: 'https://images.pexels.com/photos/31743031/pexels-photo-31743031.jpeg?w=800&q=80',
+    image: 'https://images.pexels.com/photos/5699477/pexels-photo-5699477.jpeg?w=800&q=80',
     gallery: [
-      'https://images.pexels.com/photos/34379888/pexels-photo-34379888.jpeg?w=800&q=80',
+      'https://images.pexels.com/photos/32213218/pexels-photo-32213218.jpeg?w=800&q=80',
       'https://images.pexels.com/photos/6238043/pexels-photo-6238043.jpeg?w=800&q=80',
     ],
     highlights: ['Yoga & meditation', 'Free health checks', 'Counselling sessions', 'Healthy snacks'],
@@ -171,27 +174,27 @@ const SEED_EVENTS = [
     image: 'https://images.pexels.com/photos/5940705/pexels-photo-5940705.jpeg?w=800&q=80',
     gallery: [
       'https://images.pexels.com/photos/5940834/pexels-photo-5940834.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/11025019/pexels-photo-11025019.jpeg?w=800&q=80',
+      'https://images.pexels.com/photos/37811192/pexels-photo-37811192.jpeg?w=800&q=80',
     ],
     highlights: ['Live project demos', 'Startup pitches', 'Workshop sessions', 'Networking with alumni'],
     organizer: 'Faculty of Computing',
   },
   {
     legacyId: '6',
-    title: 'Matriculation Ceremony 2026',
+    title: 'RSU 44th Matriculation Ceremony 2025/2026',
     shortDescription:
-      'Official welcome ceremony for newly admitted students with oath-taking and address by the Vice-Chancellor.',
+      'RSU inducted 5,601 new students at the 44th Matriculation Ceremony at the Convocation Arena.',
     description:
-      'Newly admitted students are formally inducted into the university community at the matriculation ceremony.',
-    date: 'Jan 20, 2026',
-    time: '09:00 AM – 12:00 PM',
-    venue: 'University Auditorium',
+      'Rivers State University (RSU) held its 44th matriculation ceremony for the 2025/2026 academic session on Wednesday, January 28, 2026, at 9:00 a.m. at the main Convocation Arena in Nkpolu-Oroworukwo, Port Harcourt, officially inducting 5,601 fresh students.\n\nEvent and Registration Details\nDate: Wednesday, January 28, 2026\nTime: 9:00 a.m.\nVenue: University Convocation Arena, RSU, Port Harcourt',
+    date: 'Jan 28, 2026',
+    time: '09:00 AM \u2013 12:00 PM',
+    venue: 'University Convocation Arena, RSU, Port Harcourt',
     status: 'past',
     category: 'Academic',
-    image: 'https://images.pexels.com/photos/30243808/pexels-photo-30243808.jpeg?w=800&q=80',
+    image: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/matriculation/matriculation_1.jpg',
     gallery: [
-      'https://images.pexels.com/photos/34850197/pexels-photo-34850197.jpeg?w=800&q=80',
-      'https://images.pexels.com/photos/34338061/pexels-photo-34338061.jpeg?w=800&q=80',
+      'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/matriculation/matriculation_2.jpg',
+      'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/matriculation/matriculation_3.jpg',
     ],
     highlights: ['Matriculation oath', 'VC address', 'Faculty introductions', 'Group photo'],
     organizer: 'Registry & Academic Affairs',
