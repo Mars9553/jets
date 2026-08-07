@@ -16,6 +16,41 @@ export default function Root({ children }: PropsWithChildren) {
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <ScrollViewStyleReset />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.__deferredInstallPrompt = null;
+              window.__isPWAReloading = false;
+              window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                window.__deferredInstallPrompt = e;
+              });
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                  if (reg.waiting) {
+                    reg.waiting.postMessage({ action: 'SKIP_WAITING' });
+                  }
+                  reg.addEventListener('updatefound', function() {
+                    var newWorker = reg.installing;
+                    if (newWorker) {
+                      newWorker.addEventListener('statechange', function() {
+                        if (newWorker.state === 'installed') {
+                          window.dispatchEvent(new CustomEvent('sw:updated', { detail: { waiting: reg.waiting } }));
+                        }
+                      });
+                    }
+                  });
+                });
+                navigator.serviceWorker.addEventListener('controllerchange', function() {
+                  if (!window.__isPWAReloading) {
+                    window.__isPWAReloading = true;
+                    window.location.reload();
+                  }
+                });
+              }
+            `,
+          }}
+        />
         <style
           dangerouslySetInnerHTML={{
             __html: `
@@ -40,29 +75,7 @@ export default function Root({ children }: PropsWithChildren) {
           }}
         />
       </head>
-      <body>
-        {children}
-          <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.__deferredInstallPrompt = null;
-              window.addEventListener('beforeinstallprompt', function(e) {
-                e.preventDefault();
-                window.__deferredInstallPrompt = e;
-              });
-              if ('serviceWorker' in navigator) {
-                window.addEventListener('load', function() {
-                  navigator.serviceWorker.register('/sw.js').then(function(reg) {
-                    console.log('SW registered');
-                  }).catch(function(err) {
-                    console.log('SW registration failed:', err);
-                  });
-                });
-              }
-            `,
-          }}
-        />
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

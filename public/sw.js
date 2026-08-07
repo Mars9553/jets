@@ -1,4 +1,4 @@
-const CACHE_NAME = 'eboard-pwa-v1';
+const CACHE_NAME = 'eboard-pwa-v2';
 const API_CACHE_NAME = 'eboard-api-v1';
 
 const ASSETS_TO_CACHE = [
@@ -8,7 +8,6 @@ const ASSETS_TO_CACHE = [
   '/favicon.ico',
   '/icons/icon-192.png',
   '/icons/icon-512.png',
-  '/assets/images/app-icon.png',
 ];
 
 self.addEventListener('install', (event) => {
@@ -28,6 +27,12 @@ self.addEventListener('activate', (event) => {
       )
     ).then(() => self.clients.claim())
   );
+});
+
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.action === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
 });
 
 self.addEventListener('fetch', (event) => {
