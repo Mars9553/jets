@@ -1,0 +1,10 @@
+{
+  "android": {
+    "package": "com.zynobi_14.javspt"
+  },
+  "extra": {
+    "eas": {
+      "projectId": "bb69c35d-0088-4795-8e8e-355d5a719d0f"
+    }
+  }
+}

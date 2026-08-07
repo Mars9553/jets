@@ -1,0 +1,14 @@
+ommega = sk-4928af03761c9881-2d1885-bc0b952f
+ Beta =  sk-4928af03761c9881-dfe69a-e5fcb03a
+
+PROVIDER 
+1. VS Code CLI :
+http://127.0.0.1:20128/callback?state=b7CkHDElj2yLUv6eCkXDUaunTbayWVGwfl1pp77jWXw&iss=https://accounts.google.com&code=4/0AXEQxIDdD5m_oLU3S9tu4p_e6-9ywHcSVC0qaJBqXJCyet2Z89RgqfELzE2qBdRLo2-_qA&scope=email%20profile%20https://www.googleapis.com/auth/cloud-platform%20https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/cclog%20https://www.googleapis.com/auth/experimentsandconfigs%20openid&authuser=0&prompt=consent
+
+another one: 
+http://127.0.0.1:20128/callback?state=zK_MR6RS_e-usRYkWpdAFgBSb2-4HkXbNzvvAW_KwZU&iss=https://accounts.google.com&code=4/0AXEQxIDE5Cpm3O-2Ai-jOAhwsHjGy-hrJ6zds0Zlylv02IeKTJCkyYh0cSesrOUNsbSVuQ&scope=email%20profile%20https://www.googleapis.com/auth/cloud-platform%20https://www.googleapis.com/auth/userinfo.email%20https://www.googleapis.com/auth/userinfo.profile%20https://www.googleapis.com/auth/cclog%20https://www.googleapis.com/auth/experimentsandconfigs%20openid&authuser=0&prompt=consent
+
+
+antigravity (omniroute API key)
+sk-4928af03761c9881-b79640-450194d6
+

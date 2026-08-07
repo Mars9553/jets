@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: eboard-pwa
+    runtime: node
+    rootDir: javspt
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+    healthCheck:
+      path: /
+      interval: 60
