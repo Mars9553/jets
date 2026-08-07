@@ -42,9 +42,14 @@ export default function Root({ children }: PropsWithChildren) {
       </head>
       <body>
         {children}
-        <script
+          <script
           dangerouslySetInnerHTML={{
             __html: `
+              window.__deferredInstallPrompt = null;
+              window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                window.__deferredInstallPrompt = e;
+              });
               if ('serviceWorker' in navigator) {
                 window.addEventListener('load', function() {
                   navigator.serviceWorker.register('/sw.js').then(function(reg) {

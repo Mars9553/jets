@@ -6,15 +6,27 @@ type InstallPromptEvent = {
   userChoice: Promise<{ outcome: string }>;
 };
 
+declare global {
+  interface Window {
+    __deferredInstallPrompt: InstallPromptEvent | null;
+  }
+}
+
 export function useInstallPrompt() {
   const [deferredPrompt, setDeferredPrompt] = useState<InstallPromptEvent | null>(null);
 
   useEffect(() => {
     if (Platform.OS !== 'web') return;
 
+    if (window.__deferredInstallPrompt) {
+      setDeferredPrompt(window.__deferredInstallPrompt);
+    }
+
     const handler = (e: Event) => {
       e.preventDefault();
-      setDeferredPrompt(e as unknown as InstallPromptEvent);
+      const promptEvent = e as unknown as InstallPromptEvent;
+      window.__deferredInstallPrompt = promptEvent;
+      setDeferredPrompt(promptEvent);
     };
 
     window.addEventListener('beforeinstallprompt', handler);
@@ -29,6 +41,7 @@ export function useInstallPrompt() {
     await deferredPrompt.prompt();
     const { outcome } = await deferredPrompt.userChoice;
     setDeferredPrompt(null);
+    window.__deferredInstallPrompt = null;
     return outcome === 'accepted';
   }, [deferredPrompt]);
 
