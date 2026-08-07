@@ -35,6 +35,19 @@ app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Not found' });
 });
 
+app.use('/sw.js', (_req, res, next) => {
+  res.setHeader('Service-Worker-Allowed', '/');
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Content-Type', 'application/javascript');
+  next();
+});
+
+app.use('/manifest.json', (_req, res, next) => {
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Content-Type', 'application/json');
+  next();
+});
+
 const webBuildPath = path.join(__dirname, '..', 'dist');
 app.use(express.static(webBuildPath, { fallthrough: true }));
 

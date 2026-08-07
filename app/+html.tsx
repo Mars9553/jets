@@ -8,6 +8,13 @@ export default function Root({ children }: PropsWithChildren) {
         <meta charSet="utf-8" />
         <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="theme-color" content="#2563eb" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="E-Board" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
         <ScrollViewStyleReset />
         <style
           dangerouslySetInnerHTML={{
@@ -33,7 +40,24 @@ export default function Root({ children }: PropsWithChildren) {
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        {children}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                window.addEventListener('load', function() {
+                  navigator.serviceWorker.register('/sw.js').then(function(reg) {
+                    console.log('SW registered');
+                  }).catch(function(err) {
+                    console.log('SW registration failed:', err);
+                  });
+                });
+              }
+            `,
+          }}
+        />
+      </body>
     </html>
   );
 }
