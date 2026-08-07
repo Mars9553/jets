@@ -1,8 +1,7 @@
-const CACHE_NAME = 'eboard-pwa-v2';
+const CACHE_NAME = 'eboard-pwa-v3';
 const API_CACHE_NAME = 'eboard-api-v1';
 
 const ASSETS_TO_CACHE = [
-  '/',
   '/index.html',
   '/manifest.json',
   '/favicon.ico',
@@ -52,20 +51,30 @@ self.addEventListener('fetch', (event) => {
       return;
     }
 
+    // HTML documents: network first (always get latest PWA code), cache as fallback
+    if (event.request.destination === 'document') {
+      event.respondWith(
+        fetch(event.request).then((response) => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
+          }
+          return response;
+        }).catch(() => caches.match(event.request).then((cached) => cached || caches.match('/index.html')))
+      );
+      return;
+    }
+
+    // Static assets: cache first
     event.respondWith(
       caches.match(event.request).then((cached) => {
         if (cached) return cached;
-
         return fetch(event.request).then((response) => {
           if (response && response.status === 200 && response.type === 'basic') {
             const clone = response.clone();
             caches.open(CACHE_NAME).then((cache) => cache.put(event.request, clone));
           }
           return response;
-        }).catch(() => {
-          if (event.request.destination === 'document') {
-            return caches.match('/index.html');
-          }
         });
       })
     );

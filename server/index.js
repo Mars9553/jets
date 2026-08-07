@@ -49,7 +49,14 @@ app.use('/manifest.json', (_req, res, next) => {
 });
 
 const webBuildPath = path.join(__dirname, '..', 'dist');
-app.use(express.static(webBuildPath, { fallthrough: true }));
+app.use(express.static(webBuildPath, {
+  fallthrough: true,
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    }
+  },
+}));
 
 app.use((req, res) => {
   res.sendFile(path.join(webBuildPath, 'index.html'));
