@@ -40,6 +40,7 @@ import { api } from '@/lib/api';
 import { getReadIds } from '@/lib/readReceipts';
 import { triggerLocalNotification } from '@/lib/notifications';
 import { useInstallPrompt } from '@/hooks/useInstallPrompt';
+import { InstallInstructionsModal } from '@/components/ui/InstallInstructionsModal';
 
 export default function ProfileScreen() {
   const router = useRouter();
@@ -47,6 +48,7 @@ export default function ProfileScreen() {
   const { colors, mode, setMode } = useTheme();
   const { showToast } = useToast();
   const { canInstall, promptInstall } = useInstallPrompt();
+  const [showInstallModal, setShowInstallModal] = useState(false);
   const s = useMemo(() => styles(colors), [colors]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [readCount, setReadCount] = useState(0);
@@ -345,20 +347,17 @@ export default function ProfileScreen() {
               <TouchableOpacity
                 style={s.prefRowButton}
                 activeOpacity={0.7}
-                onPress={async () => {
-                  if (canInstall) {
-                    const accepted = await promptInstall();
-                    showToast(
-                      accepted ? 'Installation started' : 'Installation cancelled',
-                      accepted ? 'success' : 'info'
-                    );
-                  } else {
-                    showToast(
-                      'Use your browser menu: Share > Add to Home Screen',
-                      'info'
-                    );
-                  }
-                }}
+                 onPress={async () => {
+                   if (canInstall) {
+                     const accepted = await promptInstall();
+                     showToast(
+                       accepted ? 'Installation started' : 'Installation cancelled',
+                       accepted ? 'success' : 'info'
+                     );
+                   } else {
+                     setShowInstallModal(true);
+                   }
+                 }}
               >
                 <View style={s.prefLeft}>
                   <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
@@ -397,6 +396,11 @@ export default function ProfileScreen() {
       </ScrollView>
 
       <BottomTabs active="profile" />
+
+      <InstallInstructionsModal
+        visible={showInstallModal}
+        onClose={() => setShowInstallModal(false)}
+      />
     </SafeAreaView>
   );
 }
