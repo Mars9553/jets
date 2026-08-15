@@ -90,7 +90,7 @@ export const EVENTS: CampusEvent[] = [
     id: '3',
     title: 'Korean Universe Festival',
     shortDescription:
-      'Experience K-pop, K-drama, Korean food, and games at the Korean Universe Festival in Port Harcourt.',
+      'Enjoying Korean culture in Port Harcourt.',
     description:
       'The Korean Universe Festival in Port Harcourt features K-pop, K-drama, food, and games. Additionally, the local Korean snack vendor TheSkyBrand is appearing at the rescheduled Bole Festival 2026 (Power of X).\n\nEvent Details\nKorean Universe Festival: Held previously on August 14, 2026, from 11:00 AM to 08:00 PM WAT at Tontex Garden, Port Harcourt.\n\nBole Festival 2026 (Featuring Korean Vendors):\nNew Dates: September 4th, 5th, and 6th, 2026 (rescheduled from late August).\nLocation: Yakubu Gowon Stadium, Port Harcourt, Rivers State, Nigeria.\nKorean Highlight: TheSkyBrand is hosting a pop-up Korean convenience store experience with K-pop and K-drama themes, plus Korean snacks.',
     date: 'Oct 10, 2026',
