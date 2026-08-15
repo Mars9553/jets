@@ -125,16 +125,16 @@ const SEED_EVENTS = [
       'Experience K-pop, K-drama, Korean food, and games at the Korean Universe Festival in Port Harcourt.',
     description:
       'The Korean Universe Festival in Port Harcourt features K-pop, K-drama, food, and games. Additionally, the local Korean snack vendor TheSkyBrand is appearing at the rescheduled Bole Festival 2026 (Power of X).\n\nEvent Details\nKorean Universe Festival: Held previously on August 14, 2026, from 11:00 AM to 08:00 PM WAT at Tontex Garden, Port Harcourt.\n\nBole Festival 2026 (Featuring Korean Vendors):\nNew Dates: September 4th, 5th, and 6th, 2026 (rescheduled from late August).\nLocation: Yakubu Gowon Stadium, Port Harcourt, Rivers State, Nigeria.\nKorean Highlight: TheSkyBrand is hosting a pop-up Korean convenience store experience with K-pop and K-drama themes, plus Korean snacks.',
-    date: 'Aug 14, 2026',
-    time: '11:00 AM – 08:00 PM',
+    date: 'Oct 10, 2026',
+    time: '10:00 AM',
     venue: 'Tontex Garden, Port Harcourt',
-    status: 'past',
+    status: 'upcoming',
     category: 'Social',
     image: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/korean_festival/korean_festival_1.jpg',
     gallery: [
       'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/korean_festival/korean_festival_1.jpg',
     ],
-    highlights: ['K-pop performances', 'K-drama screenings', 'Korean food & snacks', 'TheSkyBrand pop-up store', 'Games & activities'],
+    highlights: ['Kpop Singing competition', 'Kpop dancing Competiotion', 'Kdrama Viewing', 'DIY Ramen Booth', 'Kanbok Fashion Show', 'Korean Food/snaks,m', 'Korean Language consult', 'And many more'],
     organizer: 'Cultural Affairs Unit',
   },
   {
