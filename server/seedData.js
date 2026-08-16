@@ -144,9 +144,9 @@ const SEED_EVENTS = [
       'A collaborative buildathon bringing together students to create data tools, visualizations, and policy prototypes for Global South development challenges.',
     description:
       'The Global South Index Buildathon 2026 invites developers, researchers, and policy students to build open-source tools, dashboards, and datasets that illuminate development indicators across the Global South.\n\nOver two days, participants will work in cross-disciplinary teams to prototype index frameworks, build data visualizations, and create policy briefs addressing real-world challenges in education, healthcare, infrastructure, and economic empowerment.\n\nEvent Schedule:\n• Day 1: Keynote & team formation, dataset workshop, hackathon begins\n• Day 2: Prototype presentations, judging panel, award ceremony\n\nMentors from development agencies, tech companies, and academia will be available throughout. Participation is open to all RSU students. Prizes include internships, seed funding for promising projects, and publication opportunities.',
-    date: 'Oct 20 – Oct 21, 2026',
-    time: '09:00 AM – 06:00 PM',
-    venue: 'IT Innovation Hub',
+    date: 'Aug 22, 2026',
+    time: '09:00 AM',
+    venue: 'Manor House,5 Chukwu Close,Off Stadium Rd.',
     status: 'upcoming',
     category: 'Technology',
     image: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/global_south_index/gsi_1.jpg',

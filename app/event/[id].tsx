@@ -122,8 +122,8 @@ export default function EventDetailScreen() {
                   transition={200}
                   pointerEvents="none"
                 />
-                <View style={[s.coverOverlay, { backgroundColor: colors.overlay }]} />
-                <View style={s.coverContent}>
+                <View style={[s.coverOverlay, { backgroundColor: colors.overlay }]} pointerEvents="none" />
+                <View style={s.coverContent} pointerEvents="none">
                   <View style={[s.statusPill, { backgroundColor: colors.surface }]}>
                     <Text style={[s.statusPillText, { color: colors.primary }]}>{statusLabel} Event</Text>
                   </View>
