@@ -7,6 +7,7 @@ export interface Notice {
   date: string;
   comments: number;
   likes: number;
+  imageUrl?: string;
 }
 
 export const NOTICES: Notice[] = [
@@ -32,44 +33,24 @@ export const NOTICES: Notice[] = [
   {
     id: '2',
     category: 'Academic',
-    title: 'Level 100 Orientation Schedule',
+    title: 'Academic Calendar for the Second Semester (2025/2026 Academic Session)',
     summary:
-      'All Level 100 students must attend a mandatory three-day orientation program. The program covers registration, campus tours, and academic advising. It runs from February 15–17, 2026 and attendance is compulsory.',
+      'The Second Semester of the 2025/2026 academic session begins with lectures running from Monday, April 6 to Friday, June 26, 2026, alongside the submission of First Semester examination results between March 30 and April 13, 2026. The annual Students\' Week will take place from Monday, June 8 to Saturday, June 13, 2026. Examinations will follow in batches: Year 4 and 5 students write from July 6 to July 10, Year 2 and 3 students from July 13 to July 17 (and continuing July 27 to July 31), Year 1 students from July 20 to July 24, and BMAS students (Years 1, 2, and 3) from August 3 to August 7, 2026.',
     description:
-      'All Level 100 students are required to attend the mandatory orientation program scheduled from February 15–17, 2026.\n\n' +
-      'The program is designed to help new students settle in quickly and become acquainted with university life. The schedule is as follows:\n\n' +
-      'Day 1 — Registration & Campus Welcome (February 15, 9:00 AM – 4:00 PM)\n' +
-      '  • Document verification and ID card issuance at the Main Hall\n' +
-      '  • Welcome address by the Vice-Chancellor\n' +
-      '  • Campus tour in assigned faculty groups\n\n' +
-      'Day 2 — Academic Advising & Systems Orientation (February 16, 9:00 AM – 4:00 PM)\n' +
-      '  • Departmental orientation and course registration guidance\n' +
-      '  • Library and ICT resources workshop\n' +
-      '  • Introduction to the student portal and learning management system\n\n' +
-      'Day 3 — Student Life & Clubs Fair (February 17, 9:00 AM – 3:00 PM)\n' +
-      '  • Student organisations and society fair at the Sports Complex\n' +
-      '  • Closing ceremony and pledge\n\n' +
-      'Attendance is compulsory for all newly admitted Level 100 students. Any student who cannot attend must obtain prior approval from the Dean of Student Affairs.',
+      'Following the examination period, Second Semester results are scheduled for submission between Monday, August 10 and Friday, August 21, 2026, with Project Defenses (External Examinations) set for August 12 to August 14, 2026. Faculty Board and related meetings to consider both First and Second Semester results will hold from August 24 to August 28, 2026, leading up to the Senate Meeting on Thursday, September 24, 2026, to finalize the results. The 2025/2026 academic session will officially conclude on Friday, September 25, 2026, followed by the end-of-session vacation running from Saturday, September 26 to Saturday, October 17, 2026.',
     date: 'Jan 8, 2026',
     comments: 2,
     likes: 9,
+    imageUrl: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/notice-images/academic_calendar.jpg',
   },
   {
     id: '3',
     category: 'General',
-    title: 'Course Registration Deadline',
+    title: 'Course registration for the second semester',
     summary:
-      'Course registration for the 2026 semester ends May 20, 2026. Students are advised to complete their selections early through the student portal. Late registration will incur additional fees and may restrict course selection.',
+      'Course registration for the second semester officially commenced in July for continuing students. To complete this process and maintain academic standing, students are required to settle all outstanding school fee payments in full. Failure to clear these financial obligations will restrict students from registering for their modules and render them ineligible to write the upcoming second-semester examinations.',
     description:
-      'Course registration ends May 20, 2026. Late registration will incur additional fees.\n\n' +
-      'All registered students are advised to complete their course selections via the student portal before the deadline on Wednesday, May 20, 2026, at 11:59 PM.\n\n' +
-      'Key points:\n' +
-      '• Late submissions made between May 21 and May 27 will attract a fee of GHC 150.\n' +
-      '• No registrations will be accepted after May 27, 2026.\n' +
-      '• Students on academic probation must seek approval from their faculty academic advisor before registering.\n' +
-      '• Students changing programmes must submit a programme change request form to the Registrar before the deadline.\n\n' +
-      'Course timetables and availability are published on the portal. Students are encouraged to register early to avoid congestion and secure preferred slot combinations.\n\n' +
-      'For technical issues with the portal, contact the ICT Helpdesk at helpdesk@university.edu.',
+      'Students are strongly encouraged to finalize their registrations as early as possible to avoid financial penalties. While course enrollment remains open, any late submissions completed after the designated standard deadline will incur late registration fines. Completing both fee payments and course selection promptly ensures uninterrupted access to exam halls and prevents unnecessary additional charges.',
     date: 'Feb 11, 2026',
     comments: 4,
     likes: 3,
@@ -127,22 +108,18 @@ export const NOTICES: Notice[] = [
   {
     id: '6',
     category: 'General',
-    title: 'Second Semester Resumption',
+    title: 'School Resumption for 2025/2026',
     summary:
-      'All students are to resume academic activities for the second semester by April 13, 2026. Lectures and scheduled classes will begin on the same day. Students must clear any outstanding fee balances before resumption.',
+      'This official press release from the Office of the Registrar at Rivers State University announces the commencement of academic activities for the 2025/2026 session on Monday, November 3, 2025. In preparation for the new academic year, university management approved the reopening of hostels on Sunday, November 2, 2025, to allow registered students to sign in. Students are urged to pay both their school fees and accommodation fees promptly to ensure they secure a bed space for the upcoming term.',
     description:
-      'All students are to resume academic activities by April 13, 2026.\n\n' +
-      'This notice applies to all undergraduate, postgraduate, and distance-learning students. The second semester officially begins on Tuesday, April 13, 2026, and all lectures will commence on that day.\n\n' +
-      'Important reminders for resumption:\n' +
-      '• All fee balances from the first semester must be cleared before resuming.\n' +
-      '• Hostel allocation for continuing residents is automatic; new applicants must apply by April 10, 2026.\n' +
-      '• Students returning from medical leave must submit a fitness certificate to the Student Health Centre before the end of the first week.\n' +
-      '• The Add/Drop window for the second semester will run from April 13 to April 20, 2026.\n\n' +
-      'Students on academic probation are reminded to report to their faculty academic advisor within 48 hours of resumption for guidance.\n\n' +
-      'For accommodation enquiries, contact the Accommodation Office. For academic matters, contact your respective faculty office.',
-    date: 'Apr 10, 2026',
+      'This official press release from the Office of the Registrar at Rivers State University announces the commencement of academic activities for the 2025/2026 session on Monday, November 3, 2025.\n\n' +
+      'In preparation for the new academic year, university management approved the reopening of hostels on Sunday, November 2, 2025, to allow registered students to sign in. Students are urged to pay both their school fees and accommodation fees promptly to ensure they secure a bed space for the upcoming term.\n\n' +
+      'To oversee bed space allocation and preserve order, Vice-Chancellor Prof. Isaac Zeb-Obipi inaugurated Hall Wardens on October 24, 2025, instructing them to maintain strict hostel discipline. Additionally, the Vice-Chancellor explicitly prohibited the sale or transfer of bed spaces, warning that any student found committing this offense will face appropriate disciplinary measures.\n\n' +
+      'The document concludes with Registrar Mrs. I. B. S. Harry advising all students to comply fully with these directives for a smooth start to the session.',
+    date: 'Oct 24, 2025',
     comments: 12,
     likes: 4,
+    imageUrl: 'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/notice-images/resumption.jpg',
   },
   {
     id: '7',

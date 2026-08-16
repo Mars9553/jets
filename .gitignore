@@ -52,3 +52,7 @@ setup_tables.sql
 test_hashes.js
 
 .vercel
+
+# build artifacts
+dist/
+dist.zip

@@ -93,6 +93,7 @@ async function autoSeed() {
       description: n.description,
       summary: n.summary,
       date: n.date,
+      image_url: n.imageUrl ?? null,
       created_at: now,
       updated_at: now,
     }));

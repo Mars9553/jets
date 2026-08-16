@@ -7,12 +7,13 @@ import {
   ScrollView,
   StatusBar,
   TouchableOpacity,
+  Pressable,
   useWindowDimensions,
   ActivityIndicator,
 } from 'react-native';
 import { Image } from 'expo-image';
 import { useLocalSearchParams, useRouter } from 'expo-router';
-import { Calendar, Clock, MapPin, Sparkles, ArrowLeft } from 'lucide-react-native';
+import { Calendar, Clock, MapPin, Sparkles, ArrowLeft, X } from 'lucide-react-native';
 import { BoardNavbar } from '@/components/board/BoardNavbar';
 import { BoardFooter } from '@/components/board/BoardFooter';
 import { EventCard } from '@/components/events/EventCard';
@@ -37,6 +38,7 @@ export default function EventDetailScreen() {
   const [related, setRelated] = useState<EventItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [commentCount, setCommentCount] = useState(0);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const loadEvent = useCallback(async () => {
     if (!id) return;
@@ -111,21 +113,24 @@ export default function EventDetailScreen() {
           </TouchableOpacity>
 
           {event.image ? (
-            <View style={s.coverWrap}>
-              <Image
-                source={{ uri: event.image }}
-                style={s.coverImage}
-                contentFit="cover"
-                transition={200}
-              />
-              <View style={[s.coverOverlay, { backgroundColor: colors.overlay }]} />
-              <View style={s.coverContent}>
-                <View style={[s.statusPill, { backgroundColor: colors.surface }]}>
-                  <Text style={[s.statusPillText, { color: colors.primary }]}>{statusLabel} Event</Text>
+            <Pressable onPress={() => setSelectedImage(event.image)} style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}>
+              <View style={s.coverWrap}>
+                <Image
+                  source={{ uri: event.image }}
+                  style={s.coverImage}
+                  contentFit="cover"
+                  transition={200}
+                  pointerEvents="none"
+                />
+                <View style={[s.coverOverlay, { backgroundColor: colors.overlay }]} />
+                <View style={s.coverContent}>
+                  <View style={[s.statusPill, { backgroundColor: colors.surface }]}>
+                    <Text style={[s.statusPillText, { color: colors.primary }]}>{statusLabel} Event</Text>
+                  </View>
+                  <Text style={[s.title, { color: '#fff' }]}>{event.title}</Text>
                 </View>
-                <Text style={[s.title, { color: '#fff' }]}>{event.title}</Text>
               </View>
-            </View>
+            </Pressable>
           ) : (
             <Text style={[s.title, { color: colors.text }]}>{event.title}</Text>
           )}
@@ -148,13 +153,15 @@ export default function EventDetailScreen() {
             <View style={[s.gallery, isWide && s.galleryWide]}>
               <View style={[s.galleryRow, isWide && s.galleryRowWide]}>
                 {(event.gallery ?? []).map((uri) => (
-                  <Image
-                    key={uri}
-                    source={{ uri }}
-                    style={[s.galleryImage, isWide && s.galleryImageWide]}
-                    contentFit="cover"
-                    transition={200}
-                  />
+                  <Pressable key={uri} onPress={() => setSelectedImage(uri)} style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}>
+                    <Image
+                      source={{ uri }}
+                      style={[s.galleryImage, isWide && s.galleryImageWide]}
+                      contentFit="cover"
+                      transition={200}
+                      pointerEvents="none"
+                    />
+                  </Pressable>
                 ))}
               </View>
             </View>
@@ -172,37 +179,37 @@ export default function EventDetailScreen() {
 
               <Text style={[s.sidebarTitle, { color: colors.textSecondary }]}>Event Details</Text>
 
-              <View style={s.detailRow}>
-                <Calendar size={16} color={colors.primary} />
-                <View>
-                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Date</Text>
-                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.date}</Text>
-                </View>
-              </View>
+               <View style={s.detailRow}>
+                 <Calendar size={16} color={colors.primary} />
+                 <View>
+                   <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Date</Text>
+                   <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.date}</Text>
+                 </View>
+               </View>
 
-              <View style={s.detailRow}>
-                <Clock size={16} color={colors.primary} />
-                <View>
-                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Time</Text>
-                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.time}</Text>
-                </View>
-              </View>
+               <View style={s.detailRow}>
+                 <Clock size={16} color={colors.primary} />
+                 <View>
+                   <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Time</Text>
+                   <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.time}</Text>
+                 </View>
+               </View>
 
-              <View style={s.detailRow}>
-                <MapPin size={16} color={colors.primary} />
-                <View>
-                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Venue</Text>
-                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.venue}</Text>
-                </View>
-              </View>
+               <View style={s.detailRow}>
+                 <MapPin size={16} color={colors.primary} />
+                 <View>
+                   <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Venue</Text>
+                   <Text style={[s.detailValue, { color: colors.textSecondary }]}>{event.venue}</Text>
+                 </View>
+               </View>
 
-              <View style={s.detailRow}>
-                <View style={[s.statusDot, { backgroundColor: isPast ? colors.textPlaceholder : colors.primary }]} />
-                <View>
-                  <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Status</Text>
-                  <Text style={[s.detailValue, { color: colors.textSecondary }]}>{statusLabel} Event</Text>
-                </View>
-              </View>
+               <View style={s.detailRow}>
+                 <View style={[s.statusDot, { backgroundColor: isPast ? colors.textPlaceholder : colors.primary }]} />
+                 <View>
+                   <Text style={[s.detailLabel, { color: colors.textPlaceholder }]}>Status</Text>
+                   <Text style={[s.detailValue, { color: colors.textSecondary }]}>{statusLabel} Event</Text>
+                 </View>
+               </View>
 
               <Text style={[s.organizer, { color: colors.textPlaceholder }]}>Organized by {event.organizer}</Text>
             </View>
@@ -234,6 +241,23 @@ export default function EventDetailScreen() {
           <BoardFooter />
         </View>
       </ScrollView>
+
+      {selectedImage ? (
+        <View style={s.imageModalOverlay}>
+          <Pressable style={s.imageModalBackground} onPress={() => setSelectedImage(null)} />
+          <View style={s.imageModalContent}>
+            <Pressable style={s.imageModalClose} onPress={() => setSelectedImage(null)} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <X size={24} color="#fff" />
+            </Pressable>
+            <Image
+              source={{ uri: selectedImage }}
+              style={s.imageModalImage}
+              contentFit="contain"
+              transition={200}
+            />
+          </View>
+        </View>
+      ) : null}
     </SafeAreaView>
   );
 }
@@ -436,5 +460,32 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
   notFoundTitle: {
     fontSize: 18,
     fontWeight: '600',
+  },
+  imageModalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.9)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageModalBackground: {
+    position: 'absolute',
+    inset: 0,
+  },
+  imageModalContent: {
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  imageModalClose: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    zIndex: 10,
+    padding: 8,
+  },
+  imageModalImage: {
+    width: '100%',
+    height: '100%',
   },
 });
