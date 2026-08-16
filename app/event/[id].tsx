@@ -255,6 +255,7 @@ export default function EventDetailScreen() {
               style={s.imageModalImage}
               contentFit="contain"
               transition={200}
+              pointerEvents="none"
             />
           </View>
         </View>
@@ -493,6 +494,7 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    padding: 24,
   },
   imageModalClose: {
     position: 'absolute',
@@ -502,7 +504,7 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     padding: 8,
   },
   imageModalImage: {
+    flex: 1,
     width: '100%',
-    height: '100%',
   },
 });
