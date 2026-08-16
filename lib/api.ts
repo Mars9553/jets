@@ -58,6 +58,8 @@ export interface CommentItem {
   content: string;
   date: string;
   userId?: string;
+  replies?: CommentItem[];
+  parentCommentId?: string;
 }
 
 export interface NoticeItem {
@@ -202,6 +204,7 @@ export const api = {
     userId: string;
     authorName: string;
     text: string;
+    parentCommentId?: string;
   }) =>
     request<CommentItem>('/api/comments', {
       method: 'POST',

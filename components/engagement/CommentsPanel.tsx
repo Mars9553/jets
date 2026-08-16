@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   Platform,
 } from 'react-native';
-import { Send } from 'lucide-react-native';
+import { Send, Reply } from 'lucide-react-native';
 import { api, CommentItem, TargetType } from '@/lib/api';
 import { useUser } from '@/context/UserContext';
 import { Radius, Spacing } from '@/constants/theme';
@@ -30,6 +30,9 @@ export function CommentsPanel({ targetType, targetId, onCommentAdded }: Comments
   const [text, setText] = useState('');
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState('');
+  const [replySubmitting, setReplySubmitting] = useState(false);
 
   const loadComments = async () => {
     try {
@@ -71,6 +74,66 @@ export function CommentsPanel({ targetType, targetId, onCommentAdded }: Comments
     }
   };
 
+  const handleReplySubmit = async (parentId: string) => {
+    if (!user || !replyText.trim()) return;
+
+    setReplySubmitting(true);
+    try {
+      const created = await api.addComment({
+        targetType,
+        targetId,
+        userId: user.userId,
+        authorName: user.fullName,
+        text: replyText.trim(),
+        parentCommentId: parentId,
+      });
+
+      setComments((prev) =>
+        prev.map((comment) => {
+          if (comment.id === parentId) {
+            return {
+              ...comment,
+              replies: [...(comment.replies || []), created],
+            };
+          }
+          return comment;
+        })
+      );
+
+      setReplyText('');
+      setReplyingTo(null);
+      showToast('Reply posted successfully', 'success');
+      onCommentAdded?.();
+    } catch (err) {
+      console.error(err);
+      showToast(err instanceof Error ? err.message : 'Failed to post reply', 'error');
+    } finally {
+      setReplySubmitting(false);
+    }
+  };
+
+  const renderReplies = (replies: CommentItem[] = [], parentId: string) => {
+    if (!replies.length) return null;
+
+    return (
+      <View style={s.repliesContainer}>
+        {replies.map((reply) => (
+          <View key={reply.id} style={s.reply}>
+            <View style={[s.avatar, { backgroundColor: colors.primaryLight, width: 28, height: 28, borderRadius: 14 }]}>
+              <Text style={[s.avatarText, { color: colors.primary, fontSize: 10 }]}>{reply.initials}</Text>
+            </View>
+            <View style={[s.commentBody, { backgroundColor: colors.surface }]}>
+              <View style={s.commentTop}>
+                <Text style={[s.author, { color: colors.textSecondary }]}>{reply.author}</Text>
+                <Text style={[s.time, { color: colors.textPlaceholder }]}>{reply.date}</Text>
+              </View>
+              <Text style={[s.commentText, { color: colors.textMuted }]}>{reply.content}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
+    );
+  };
 
   return (
     <View style={[s.container, { borderTopColor: colors.borderLight }]}>
@@ -92,6 +155,44 @@ export function CommentsPanel({ targetType, targetId, onCommentAdded }: Comments
                 <Text style={[s.time, { color: colors.textPlaceholder }]}>{comment.date}</Text>
               </View>
               <Text style={[s.commentText, { color: colors.textMuted }]}>{comment.content}</Text>
+              {user && (
+                <TouchableOpacity
+                  style={s.replyBtn}
+                  onPress={() => {
+                    setReplyingTo(replyingTo === comment.id ? null : comment.id);
+                    setReplyText('');
+                  }}
+                >
+                  <Reply size={12} color={colors.primary} />
+                  <Text style={[s.replyBtnText, { color: colors.primary }]}>
+                    {replyingTo === comment.id ? 'Cancel' : 'Reply'}
+                  </Text>
+                </TouchableOpacity>
+              )}
+              {replyingTo === comment.id && (
+                <View style={s.replyInputRow}>
+                  <TextInput
+                    style={[
+                      s.replyInput,
+                      { backgroundColor: colors.surface, borderColor: colors.border, color: colors.text },
+                      Platform.OS === 'web' ? ({ outlineStyle: 'none' } as object) : null,
+                    ]}
+                    placeholder="Write a reply..."
+                    placeholderTextColor={colors.textPlaceholder}
+                    value={replyText}
+                    onChangeText={setReplyText}
+                    multiline
+                  />
+                  <TouchableOpacity
+                    style={[s.sendBtn, { backgroundColor: colors.primary }, (!replyText.trim() || replySubmitting) && { backgroundColor: colors.textPlaceholder }]}
+                    onPress={() => handleReplySubmit(comment.id)}
+                    disabled={!replyText.trim() || replySubmitting}
+                  >
+                    <Send size={14} color={colors.surface} />
+                  </TouchableOpacity>
+                </View>
+              )}
+              {renderReplies(comment.replies, comment.id)}
             </View>
           </View>
         ))
@@ -180,6 +281,42 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
   commentText: {
     fontSize: 14,
     lineHeight: 20,
+  },
+  replyBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 8,
+  },
+  replyBtnText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  replyInputRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    gap: Spacing.sm,
+    marginTop: Spacing.sm,
+  },
+  replyInput: {
+    flex: 1,
+    borderWidth: 1,
+    borderRadius: Radius.md,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+    fontSize: 14,
+    maxHeight: 100,
+  },
+  repliesContainer: {
+    marginTop: Spacing.sm,
+    paddingLeft: 12,
+    borderLeftWidth: 2,
+    borderLeftColor: colors.borderLight,
+    gap: Spacing.sm,
+  },
+  reply: {
+    flexDirection: 'row',
+    gap: 8,
   },
   inputRow: {
     flexDirection: 'row',
