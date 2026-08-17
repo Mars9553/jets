@@ -9,6 +9,7 @@ const noticesRouter = require('./routes/notices');
 const eventsRouter = require('./routes/events');
 const engagementRouter = require('./routes/engagement');
 const usersRouter = require('./routes/users');
+const pushRouter = require('./routes/push');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -30,6 +31,7 @@ app.use('/api/notices', noticesRouter);
 app.use('/api/events', eventsRouter);
 app.use('/api', engagementRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/push', pushRouter);
 
 app.use('/api', (req, res) => {
   res.status(404).json({ error: 'Not found' });

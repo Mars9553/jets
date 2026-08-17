@@ -3,7 +3,7 @@ services:
     name: e-board
     env: node
     plan: free
-    buildCommand: npm install && npm run build
+    buildCommand: npm install && npm run build && node scripts/copy-redirects.js
     startCommand: node server/index.js
     envVars:
       - key: NODE_VERSION
@@ -14,3 +14,9 @@ services:
         value: <set in Render dashboard>
       - key: SUPABASE_PUBLISHABLE_KEY
         value: sb_publishable_7FY-JzvX35AnobdxBPKudA_mjhpYgXm
+      - key: VAPID_PUBLIC_KEY
+        value: BI0ldw3oi_sPbWdmJw00lmEVN37Ng0K4W7V8mhn3oKaQDPXVYFnCtiSUt59d-DfwZcMHILSyNyTnjFJak9A7twI
+      - key: VAPID_PRIVATE_KEY
+        value: dENlZBGtwX4P7vgsih84ri4SzqVpJhXZ7cJzq5e1lp0
+      - key: VAPID_SUBJECT
+        value: mailto:admin@rsu.edu.ng

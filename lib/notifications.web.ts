@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { NoticeItem, EventItem } from './api';
 
 const WEB_PERMISSION_KEY = 'web_notification_permission';
+const PUSH_SUBSCRIBED_KEY = 'push_subscribed';
 
 export const WEB_NOTIFICATION_EVENT = 'eboard-web-notification';
 
@@ -11,11 +12,6 @@ export type WebNotificationPayload = {
   data?: any;
 };
 
-/**
- * Dispatch a custom DOM event so the app can show an in-app toast.
- * This guarantees the user always receives feedback on web, regardless
- * of whether the browser Notification API is permitted or available.
- */
 export function dispatchWebNotification(payload: WebNotificationPayload) {
   if (typeof window === 'undefined') return;
   window.dispatchEvent(
@@ -37,9 +33,6 @@ async function ensureWebNotificationPermission(): Promise<boolean> {
   }
 }
 
-/**
- * Request notification permissions for web (Web Notifications API).
- */
 export async function registerForNotificationsAsync() {
   if (typeof window === 'undefined' || typeof Notification === 'undefined') return false;
 
@@ -54,15 +47,6 @@ export async function registerForNotificationsAsync() {
   }
 }
 
-/**
- * Trigger a web notification.
- *
- * Strategy:
- *  1. Try the browser Notification API (if permission granted).
- *  2. Always dispatch a custom DOM event so the app can show an in-app
- *     toast as a reliable fallback / guarantee.
- *  3. If the browser API is unavailable, fall back to window.alert.
- */
 export async function triggerLocalNotification(title: string, body: string, data?: any) {
   dispatchWebNotification({ title, body, data });
 
@@ -89,9 +73,6 @@ export async function triggerLocalNotification(title: string, body: string, data
 const SEEN_NOTICES_KEY = 'seen_notice_ids';
 const SEEN_EVENTS_KEY = 'seen_event_ids';
 
-/**
- * Checks for any new notices/memos and triggers a notification for them.
- */
 export async function checkForNewNotices(notices: NoticeItem[]) {
   if (!notices || notices.length === 0) return;
 
@@ -134,9 +115,6 @@ export async function checkForNewNotices(notices: NoticeItem[]) {
   }
 }
 
-/**
- * Checks for any new events and triggers a notification for them.
- */
 export async function checkForNewEvents(events: EventItem[]) {
   if (!events || events.length === 0) return;
 
@@ -176,5 +154,111 @@ export async function checkForNewEvents(events: EventItem[]) {
     }
   } catch (error) {
     console.error('Error checking for new events:', error);
+  }
+}
+
+type PushSubscriptionJSON = {
+  endpoint: string;
+  keys: {
+    p256dh: string;
+    auth: string;
+  };
+};
+
+async function getVapidPublicKey(): Promise<string | null> {
+  try {
+    const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+    const res = await fetch(`${baseUrl}/api/push/vapid-public-key`);
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.publicKey || null;
+  } catch {
+    return null;
+  }
+}
+
+export async function subscribeUserToPush(userId?: string): Promise<boolean> {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+    return false;
+  }
+
+  try {
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') {
+      return false;
+    }
+
+    const vapidKey = await getVapidPublicKey();
+    if (!vapidKey) {
+      console.warn('VAPID public key not available');
+      return false;
+    }
+
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: vapidKey,
+    });
+
+    const json = subscription.toJSON() as PushSubscriptionJSON;
+
+    await fetch(`${typeof window !== 'undefined' ? window.location.origin : ''}/api/push/subscribe`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        userId,
+        subscription: {
+          endpoint: json.endpoint,
+          keys: json.keys,
+        },
+        userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : null,
+      }),
+    });
+
+    await AsyncStorage.setItem(PUSH_SUBSCRIBED_KEY, 'true');
+    return true;
+  } catch (error) {
+    console.error('Failed to subscribe to push:', error);
+    return false;
+  }
+}
+
+export async function unsubscribeUserFromPush(): Promise<void> {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    return;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (subscription) {
+      const json = subscription.toJSON() as PushSubscriptionJSON;
+      await fetch(`${typeof window !== 'undefined' ? window.location.origin : ''}/api/push/unsubscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ endpoint: json.endpoint }),
+      });
+      await subscription.unsubscribe();
+    }
+    await AsyncStorage.setItem(PUSH_SUBSCRIBED_KEY, 'false');
+  } catch (error) {
+    console.error('Failed to unsubscribe from push:', error);
+  }
+}
+
+export async function isPushSubscribed(): Promise<boolean> {
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    return false;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.ready;
+    const subscription = await registration.pushManager.getSubscription();
+    if (!subscription) return false;
+
+    const stored = await AsyncStorage.getItem(PUSH_SUBSCRIBED_KEY);
+    return stored === 'true';
+  } catch {
+    return false;
   }
 }

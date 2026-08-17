@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import {
   View,
   Text,
@@ -38,7 +38,7 @@ import { useTheme } from '@/context/ThemeContext';
 import { useToast } from '@/context/ToastContext';
 import { api } from '@/lib/api';
 import { getReadIds } from '@/lib/readReceipts';
-import { triggerLocalNotification } from '@/lib/notifications';
+import { triggerLocalNotification, unsubscribeUserFromPush, subscribeUserToPush, isPushSubscribed } from '@/lib/notifications';
 import { useInstallPrompt } from '@/hooks/useInstallPrompt';
 import { InstallInstructionsModal } from '@/components/ui/InstallInstructionsModal';
 
@@ -51,6 +51,16 @@ export default function ProfileScreen() {
   const [showInstallModal, setShowInstallModal] = useState(false);
   const s = useMemo(() => styles(colors), [colors]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function check() {
+      const subscribed = await isPushSubscribed();
+      if (!cancelled) setNotificationsEnabled(subscribed);
+    }
+    check();
+    return () => { cancelled = true; };
+  }, []);
   const [readCount, setReadCount] = useState(0);
   const [alertsCount, setAlertsCount] = useState(0);
   const [themeExpanded, setThemeExpanded] = useState(false);
@@ -82,6 +92,9 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     const performLogout = async () => {
+      if (Platform.OS === 'web') {
+        await unsubscribeUserFromPush();
+      }
       await setUser(null);
       router.replace('/(auth)/' as any);
     };
@@ -218,7 +231,14 @@ export default function ProfileScreen() {
               </View>
               <Switch
                 value={notificationsEnabled}
-                onValueChange={setNotificationsEnabled}
+                onValueChange={async (value) => {
+                  setNotificationsEnabled(value);
+                  if (value) {
+                    await subscribeUserToPush(user?.userId);
+                  } else {
+                    await unsubscribeUserFromPush();
+                  }
+                }}
                 trackColor={{ false: colors.border, true: colors.primaryMuted }}
                 thumbColor={notificationsEnabled ? colors.primary : colors.textPlaceholder}
               />

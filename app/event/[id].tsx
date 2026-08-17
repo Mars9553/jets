@@ -298,6 +298,7 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     overflow: 'hidden',
     marginBottom: Spacing.lg,
     ...Shadow.card,
+    position: 'relative',
   },
   coverImage: {
     width: '100%',
@@ -362,10 +363,12 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     height: 200,
     borderRadius: Radius.lg,
     backgroundColor: colors.illustration,
+    position: 'relative',
   },
   galleryImageWide: {
     flex: 1,
     height: 220,
+    position: 'relative',
   },
   sidebar: {
     borderRadius: Radius.lg,

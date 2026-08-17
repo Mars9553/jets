@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   StyleSheet,
+  Platform,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { ChevronDown } from 'lucide-react-native';
@@ -14,6 +15,7 @@ import { authStyles as styles } from '@/styles/authStyles';
 import { AppColors } from '@/constants/theme';
 import { api } from '@/lib/api';
 import { useUser } from '@/context/UserContext';
+import { subscribeUserToPush } from '@/lib/notifications';
 
 // MAT number format: DE.YYYY/NNNN  e.g. DE.2021/5628
 const MAT_REGEX = /^DE\.\d{4}\/\d{4}$/i;
@@ -79,6 +81,9 @@ export default function RegisterScreen() {
         department: department.trim(),
       });
       await setUser(user);
+      if (Platform.OS === 'web') {
+        subscribeUserToPush(user.userId);
+      }
       router.replace('/user_notice');
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Unable to register');

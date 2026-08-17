@@ -8,6 +8,17 @@ import { NoticeItem, EventItem } from './api';
 export const WEB_NOTIFICATION_EVENT = 'eboard-web-notification';
 export type WebNotificationPayload = { title: string; body: string; data?: any };
 
+export async function subscribeUserToPush(): Promise<boolean> {
+  return false;
+}
+
+export async function unsubscribeUserFromPush(): Promise<void> {
+}
+
+export async function isPushSubscribed(): Promise<boolean> {
+  return false;
+}
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,

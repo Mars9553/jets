@@ -112,6 +112,7 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     ...Shadow.card,
     flex: 1,
     minWidth: 260,
+    position: 'relative',
   },
   cardCompact: {
     minWidth: 220,

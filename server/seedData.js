@@ -156,8 +156,8 @@ const SEED_EVENTS = [
       'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/global_south_index/gsi_3.jpg',
       'https://ypeazvixfahfhnonqqra.supabase.co/storage/v1/object/public/event-images/global_south_index/gsi_4.jpg',
     ],
-    highlights: ['Cross-disciplinary team projects', 'Mentorship from development experts', 'Open data workshops', 'Prototype showcase & awards'],
-    organizer: 'Faculty of Computing & Global Development Society',
+    highlights: ["Live Pitch Battles", "Tech Job Offers", "Industry Networking", "Platform Reveal"],
+    organizer: 'Parakletus Hub Nigeria.',
   },
   {
     legacyId: '5',

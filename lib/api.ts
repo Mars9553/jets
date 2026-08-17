@@ -6,13 +6,21 @@ import { Platform } from 'react-native';
  *
  * Priority:
  *  1. EXPO_PUBLIC_API_URL env var  → use for production / staging
- *  2. Dev + native device          → extract host from Metro's hostUri
+ *  2. Dev + web                    → localhost:3001 directly; the webpack proxy
+ *                                   is not reliably available in this project,
+ *                                   so we bypass it and hit the API server
+ *                                   straight from the browser.
+ *  3. Dev + native device          → extract host from Metro's hostUri
  *                                    (same machine = same IP as the API server)
- *  3. Dev + web / emulator         → localhost works fine
+ *  4. Production web (served from API server) → same origin
  */
 function getApiUrl(): string {
   if (process.env.EXPO_PUBLIC_API_URL) {
     return process.env.EXPO_PUBLIC_API_URL;
+  }
+
+  if (__DEV__ && Platform.OS === 'web') {
+    return 'http://localhost:3001';
   }
 
   if (typeof window !== 'undefined' && window.location.origin) {

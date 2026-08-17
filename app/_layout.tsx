@@ -5,9 +5,10 @@ import { Platform } from 'react-native';
 import { UserProvider, useUser } from '@/context/UserContext';
 import { ThemeProvider, useTheme } from '@/context/ThemeContext';
 import { ToastProvider, useToast } from '@/context/ToastContext';
-import { registerForNotificationsAsync, WEB_NOTIFICATION_EVENT } from '@/lib/notifications';
+import { registerForNotificationsAsync, WEB_NOTIFICATION_EVENT, subscribeUserToPush, checkForNewNotices, checkForNewEvents } from '@/lib/notifications';
 import { useNetworkStatus } from '@/hooks/useNetworkStatus';
 import { OfflineScreen } from '@/components/ui/OfflineScreen';
+import { api } from '@/lib/api';
 
 function WebNotificationListener() {
   const { showToast } = useToast();
@@ -68,6 +69,70 @@ function AppContent() {
   return <NavigationGate />;
 }
 
+function NotificationPolling() {
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (!user) return;
+
+    let mounted = true;
+    const userId = user.userId;
+
+    async function poll() {
+      try {
+        const [notices, events] = await Promise.all([
+          api.getNotices(userId),
+          api.getEvents(userId),
+        ]);
+
+        if (!mounted) return;
+
+        if (Platform.OS === 'web') {
+          await checkForNewNotices(notices);
+          await checkForNewEvents(events);
+        }
+      } catch {
+        // ignore polling errors
+      }
+    }
+
+    poll();
+    const interval = setInterval(poll, 5 * 60 * 1000);
+
+    return () => {
+      mounted = false;
+      clearInterval(interval);
+    };
+  }, [user?.userId]);
+
+  return null;
+}
+
+function PushSubscriptionGate() {
+  const { user } = useUser();
+
+  useEffect(() => {
+    if (!user || Platform.OS !== 'web') return;
+
+    let cancelled = false;
+    const userId = user.userId;
+
+    async function setup() {
+      const granted = await registerForNotificationsAsync();
+      if (!granted || cancelled) return;
+      await subscribeUserToPush(userId);
+    }
+
+    setup();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.userId]);
+
+  return null;
+}
+
 export default function RootLayout() {
   useEffect(() => {
     registerForNotificationsAsync();
@@ -79,6 +144,8 @@ export default function RootLayout() {
         <ThemeProvider>
           <StatusBar style="dark" />
           <WebNotificationListener />
+          <NotificationPolling />
+          <PushSubscriptionGate />
           <AppContent />
         </ThemeProvider>
       </ToastProvider>

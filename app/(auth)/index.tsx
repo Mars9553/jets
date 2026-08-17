@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity } from 'react-native';
+import { View, Text, TouchableOpacity, Platform } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AuthScreen, AuthCardHeader, AuthErrorBanner } from '@/components/auth/AuthScreen';
 import { AuthField } from '@/components/auth/AuthField';
 import { authStyles as styles } from '@/styles/authStyles';
 import { api } from '@/lib/api';
 import { useUser } from '@/context/UserContext';
+import { subscribeUserToPush } from '@/lib/notifications';
 
 // MAT number format: DE.YYYY/NNNN  e.g. DE.2021/5628
 const MAT_REGEX = /^DE\.\d{4}\/\d{4}$/i;
@@ -46,6 +47,9 @@ export default function LoginScreen() {
     try {
       const user = await api.login(matNumber.toUpperCase(), password);
       await setUser(user);
+      if (Platform.OS === 'web') {
+        subscribeUserToPush(user.userId);
+      }
       router.replace('/user_notice');
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Unable to sign in');
