@@ -115,12 +115,11 @@ function PushSubscriptionGate() {
     if (!user || Platform.OS !== 'web') return;
 
     let cancelled = false;
-    const userId = user.userId;
 
     async function setup() {
       const granted = await registerForNotificationsAsync();
       if (!granted || cancelled) return;
-      await subscribeUserToPush(userId);
+      await subscribeUserToPush(user.userId);
     }
 
     setup();

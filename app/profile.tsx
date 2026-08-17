@@ -52,6 +52,8 @@ export default function ProfileScreen() {
   const s = useMemo(() => styles(colors), [colors]);
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
 
+  const [enableNotificationStatus, setEnableNotificationStatus] = useState<string | null>(null);
+
   useEffect(() => {
     let cancelled = false;
     async function check() {
@@ -229,19 +231,43 @@ export default function ProfileScreen() {
                   <Text style={s.prefSubtitle}>Get notified on urgent updates</Text>
                 </View>
               </View>
-              <Switch
-                value={notificationsEnabled}
-                onValueChange={async (value) => {
-                  setNotificationsEnabled(value);
-                  if (value) {
-                    await subscribeUserToPush(user?.userId);
-                  } else {
-                    await unsubscribeUserFromPush();
-                  }
-                }}
-                trackColor={{ false: colors.border, true: colors.primaryMuted }}
-                thumbColor={notificationsEnabled ? colors.primary : colors.textPlaceholder}
-              />
+              <View style={{ alignItems: 'flex-end' }}>
+                <Switch
+                  value={notificationsEnabled}
+                  onValueChange={async (value) => {
+                    setNotificationsEnabled(value);
+                    if (value) {
+                      await subscribeUserToPush(user?.userId);
+                    } else {
+                      await unsubscribeUserFromPush();
+                    }
+                  }}
+                  trackColor={{ false: colors.border, true: colors.primaryMuted }}
+                  thumbColor={notificationsEnabled ? colors.primary : colors.textPlaceholder}
+                />
+                {enableNotificationStatus ? (
+                  <Text style={[s.prefSubtitle, { marginTop: 6 }]}>{enableNotificationStatus}</Text>
+                ) : null}
+                {!notificationsEnabled && (
+                  <TouchableOpacity
+                    style={[s.primaryButton, { marginTop: 10, paddingVertical: 10 }]}
+                    onPress={async () => {
+                      setEnableNotificationStatus('Requesting permission...');
+                      const ok = await subscribeUserToPush(user?.userId);
+                      if (ok) {
+                        setNotificationsEnabled(true);
+                        setEnableNotificationStatus('Notifications enabled');
+                      } else {
+                        setNotificationsEnabled(false);
+                        setEnableNotificationStatus('Permission denied or unavailable');
+                      }
+                    }}
+                    activeOpacity={0.85}
+                  >
+                    <Text style={s.primaryButtonText}>Enable Notifications</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
             </View>
 
           <View style={s.divider} />
@@ -647,5 +673,16 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     fontSize: 14,
     fontWeight: '600',
     color: '#dc2626',
+  },
+  primaryButton: {
+    backgroundColor: colors.primary,
+    borderRadius: Radius.sm,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  primaryButtonText: {
+    color: colors.surface,
+    fontWeight: '600',
+    fontSize: 15,
   },
 });
