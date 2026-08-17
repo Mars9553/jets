@@ -179,30 +179,35 @@ async function getVapidPublicKey(): Promise<string | null> {
 
 export async function subscribeUserToPush(userId?: string): Promise<boolean> {
   if (typeof window === 'undefined' || !('serviceWorker' in navigator) || !('PushManager' in window)) {
+    console.warn('[Push] environment does not support push');
     return false;
   }
 
   try {
     const permission = await Notification.requestPermission();
+    console.log('[Push] permission result:', permission);
     if (permission !== 'granted') {
       return false;
     }
 
     const vapidKey = await getVapidPublicKey();
+    console.log('[Push] vapid key loaded:', !!vapidKey);
     if (!vapidKey) {
-      console.warn('VAPID public key not available');
+      console.warn('[Push] VAPID public key not available');
       return false;
     }
 
     const registration = await navigator.serviceWorker.ready;
+    console.log('[Push] service worker ready');
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: vapidKey,
     });
+    console.log('[Push] subscription created');
 
     const json = subscription.toJSON() as PushSubscriptionJSON;
 
-    await fetch(`${typeof window !== 'undefined' ? window.location.origin : ''}/api/push/subscribe`, {
+    const res = await fetch(`${typeof window !== 'undefined' ? window.location.origin : ''}/api/push/subscribe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -215,10 +220,14 @@ export async function subscribeUserToPush(userId?: string): Promise<boolean> {
       }),
     });
 
+    console.log('[Push] subscribe API status:', res.status);
+    const text = await res.text();
+    console.log('[Push] subscribe API body:', text);
+
     await AsyncStorage.setItem(PUSH_SUBSCRIBED_KEY, 'true');
     return true;
   } catch (error) {
-    console.error('Failed to subscribe to push:', error);
+    console.error('[Push] subscribeUserToPush failed:', error);
     return false;
   }
 }
@@ -254,11 +263,16 @@ export async function isPushSubscribed(): Promise<boolean> {
   try {
     const registration = await navigator.serviceWorker.ready;
     const subscription = await registration.pushManager.getSubscription();
+    const hasSubscription = !!subscription;
+    console.log('[Push] isPushSubscribed subscription exists:', hasSubscription);
     if (!subscription) return false;
 
     const stored = await AsyncStorage.getItem(PUSH_SUBSCRIBED_KEY);
-    return stored === 'true';
-  } catch {
+    const result = stored === 'true';
+    console.log('[Push] isPushSubscribed stored flag:', stored, 'result:', result);
+    return result;
+  } catch (e) {
+    console.error('[Push] isPushSubscribed error:', e);
     return false;
   }
 }

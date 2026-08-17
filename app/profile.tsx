@@ -50,15 +50,20 @@ export default function ProfileScreen() {
   const { canInstall, promptInstall } = useInstallPrompt();
   const [showInstallModal, setShowInstallModal] = useState(false);
   const s = useMemo(() => styles(colors), [colors]);
-  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
-
+  const [notificationsEnabled, setNotificationsEnabled] = useState(false);
   const [enableNotificationStatus, setEnableNotificationStatus] = useState<string | null>(null);
+  const [enableNotificationLoading, setEnableNotificationLoading] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
     async function check() {
-      const subscribed = await isPushSubscribed();
-      if (!cancelled) setNotificationsEnabled(subscribed);
+      try {
+        const subscribed = await isPushSubscribed();
+        if (!cancelled) setNotificationsEnabled(subscribed);
+      } catch (e) {
+        console.error('[Profile] isPushSubscribed failed:', e);
+        if (!cancelled) setNotificationsEnabled(false);
+      }
     }
     check();
     return () => { cancelled = true; };
@@ -166,8 +171,80 @@ export default function ProfileScreen() {
             </View>
           </View>
 
-          {/* Personal Information */}
-          <Text style={s.sectionTitle}>Personal Information</Text>
+          {/* Notifications Card - Prominent */}
+          {Platform.OS === 'web' && (
+            <View style={[s.infoCard, s.notificationCard]}>
+              <View style={s.notificationHeader}>
+                <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
+                  <Bell size={20} color={colors.primary} />
+                </View>
+                <View style={s.infoContent}>
+                  <Text style={[s.prefTitle, { fontSize: 16 }]}>Push Notifications</Text>
+                  <Text style={s.prefSubtitle}>Get instant alerts for new notices and events</Text>
+                </View>
+              </View>
+              <View style={s.divider} />
+              <View style={s.notificationBody}>
+                {notificationsEnabled ? (
+                  <View style={s.notificationEnabledRow}>
+                    <View style={[s.statusDot, { backgroundColor: colors.success }]} />
+                    <Text style={[s.prefSubtitle, { color: colors.success, fontWeight: '600' }]}>
+                      Notifications are enabled
+                    </Text>
+                    <TouchableOpacity
+                      style={[s.secondaryButton, { marginLeft: 'auto' }]}
+                      onPress={async () => {
+                        await unsubscribeUserFromPush();
+                        setNotificationsEnabled(false);
+                        setEnableNotificationStatus(null);
+                      }}
+                      activeOpacity={0.7}
+                    >
+                      <Text style={[s.secondaryButtonText, { color: colors.primary }]}>Disable</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View>
+                    <Text style={[s.prefSubtitle, { marginBottom: 12 }]}>
+                      You're not receiving push notifications. Enable them to get updates about new memos, events, and urgent notices.
+                    </Text>
+                    <TouchableOpacity
+                      style={[s.enableNotifyButton, enableNotificationLoading && s.enableNotifyButtonDisabled]}
+                      onPress={async () => {
+                        setEnableNotificationLoading(true);
+                        setEnableNotificationStatus('Requesting permission...');
+                        try {
+                          const ok = await subscribeUserToPush(user?.userId);
+                          if (ok) {
+                            setNotificationsEnabled(true);
+                            setEnableNotificationStatus('Notifications enabled');
+                          } else {
+                            setNotificationsEnabled(false);
+                            setEnableNotificationStatus('Permission denied or unavailable. Check browser settings.');
+                          }
+                        } catch (e) {
+                          setNotificationsEnabled(false);
+                          setEnableNotificationStatus('Something went wrong. Please try again.');
+                        } finally {
+                          setEnableNotificationLoading(false);
+                        }
+                      }}
+                      activeOpacity={0.85}
+                      disabled={enableNotificationLoading}
+                    >
+                      <Bell size={18} color={colors.surface} />
+                      <Text style={s.enableNotifyButtonText}>
+                        {enableNotificationLoading ? 'Enabling...' : 'Enable Notifications'}
+                      </Text>
+                    </TouchableOpacity>
+                    {enableNotificationStatus ? (
+                      <Text style={[s.prefSubtitle, { marginTop: 8 }]}>{enableNotificationStatus}</Text>
+                    ) : null}
+                  </View>
+                )}
+              </View>
+            </View>
+          )}
           <View style={s.infoCard}>
             <View style={s.infoRow}>
               <View style={s.infoIconWrapper}>
@@ -221,56 +298,11 @@ export default function ProfileScreen() {
           {/* App Preferences */}
           <Text style={s.sectionTitle}>Preferences</Text>
           <View style={s.infoCard}>
-            <View style={s.prefRow}>
-              <View style={s.prefLeft}>
-                <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
-                  <Bell size={18} color={colors.primary} />
-                </View>
-                <View style={s.infoContent}>
-                  <Text style={s.prefTitle}>Push Notifications</Text>
-                  <Text style={s.prefSubtitle}>Get notified on urgent updates</Text>
-                </View>
-              </View>
-              <View style={{ alignItems: 'flex-end' }}>
-                <Switch
-                  value={notificationsEnabled}
-                  onValueChange={async (value) => {
-                    setNotificationsEnabled(value);
-                    if (value) {
-                      await subscribeUserToPush(user?.userId);
-                    } else {
-                      await unsubscribeUserFromPush();
-                    }
-                  }}
-                  trackColor={{ false: colors.border, true: colors.primaryMuted }}
-                  thumbColor={notificationsEnabled ? colors.primary : colors.textPlaceholder}
-                />
-                {enableNotificationStatus ? (
-                  <Text style={[s.prefSubtitle, { marginTop: 6 }]}>{enableNotificationStatus}</Text>
-                ) : null}
-                {!notificationsEnabled && (
-                  <TouchableOpacity
-                    style={[s.primaryButton, { marginTop: 10, paddingVertical: 10 }]}
-                    onPress={async () => {
-                      setEnableNotificationStatus('Requesting permission...');
-                      const ok = await subscribeUserToPush(user?.userId);
-                      if (ok) {
-                        setNotificationsEnabled(true);
-                        setEnableNotificationStatus('Notifications enabled');
-                      } else {
-                        setNotificationsEnabled(false);
-                        setEnableNotificationStatus('Permission denied or unavailable');
-                      }
-                    }}
-                    activeOpacity={0.85}
-                  >
-                    <Text style={s.primaryButtonText}>Enable Notifications</Text>
-                  </TouchableOpacity>
-                )}
-              </View>
-            </View>
-
-          <View style={s.divider} />
+            <TouchableOpacity
+              style={s.prefRow}
+              onPress={() => setThemeExpanded(!themeExpanded)}
+              activeOpacity={0.7}
+            >
 
           <TouchableOpacity
             style={s.prefRow}
@@ -607,6 +639,27 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     backgroundColor: colors.borderLight,
     marginHorizontal: Spacing.md,
   },
+  notificationCard: {
+    ...Shadow.card,
+  },
+  notificationHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
+  notificationBody: {
+    paddingTop: Spacing.sm,
+  },
+  notificationEnabledRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  statusDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+  },
   prefRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -684,5 +737,36 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     color: colors.surface,
     fontWeight: '600',
     fontSize: 15,
+  },
+  enableNotifyButton: {
+    backgroundColor: colors.primary,
+    borderRadius: Radius.sm,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 8,
+    width: '100%',
+  },
+  enableNotifyButtonDisabled: {
+    opacity: 0.7,
+  },
+  enableNotifyButtonText: {
+    color: colors.surface,
+    fontWeight: '600',
+    fontSize: 15,
+  },
+  secondaryButton: {
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    borderRadius: Radius.sm,
+    borderWidth: 1,
+    borderColor: colors.borderLight,
+    backgroundColor: colors.background,
+  },
+  secondaryButtonText: {
+    fontWeight: '600',
+    fontSize: 13,
   },
 });
