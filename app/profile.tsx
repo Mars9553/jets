@@ -303,26 +303,20 @@ export default function ProfileScreen() {
               onPress={() => setThemeExpanded(!themeExpanded)}
               activeOpacity={0.7}
             >
-
-          <TouchableOpacity
-            style={s.prefRow}
-            onPress={() => setThemeExpanded(!themeExpanded)}
-            activeOpacity={0.7}
-          >
-            <View style={s.prefLeft}>
-              <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
-                <Moon size={18} color={colors.primary} />
+              <View style={s.prefLeft}>
+                <View style={[s.infoIconWrapper, { backgroundColor: colors.primaryLight }]}>
+                  <Moon size={18} color={colors.primary} />
+                </View>
+                <View style={s.infoContent}>
+                  <Text style={s.prefTitle}>Appearance</Text>
+                  <Text style={s.prefSubtitle}>Choose light, dark, or system theme</Text>
+                </View>
               </View>
-              <View style={s.infoContent}>
-                <Text style={s.prefTitle}>Appearance</Text>
-                <Text style={s.prefSubtitle}>Choose light, dark, or system theme</Text>
-              </View>
-            </View>
-            <ChevronDown
-              size={18}
-              color={colors.textPlaceholder}
-            />
-          </TouchableOpacity>
+              <ChevronDown
+                size={18}
+                color={colors.textPlaceholder}
+              />
+            </TouchableOpacity>
 
           {themeExpanded && (
             <View style={s.themeOptions}>
