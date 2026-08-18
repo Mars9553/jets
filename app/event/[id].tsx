@@ -178,13 +178,14 @@ export default function EventDetailScreen() {
 
           <View style={[s.mainSection, isWide && s.mainSectionWide]}>
             <View style={[s.gallery, isWide && s.galleryWide]}>
+              <Text style={[s.galleryCount, { color: colors.textMuted }]}>
+                {event.gallery?.length ? `${event.gallery.length} images` : 'No gallery images'}
+              </Text>
               <View style={[s.galleryRow, isWide && s.galleryRowWide]}>
                 {(event.gallery ?? []).map((uri) => (
                   <GalleryImage
                     key={uri}
                     uri={uri}
-                    isWide={isWide}
-                    colors={colors}
                     onPress={() => setSelectedImage(uri)}
                   />
                 ))}
@@ -381,8 +382,12 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
   galleryRowWide: {
     flexDirection: 'row',
   },
+  galleryCount: {
+    fontSize: 12,
+    fontWeight: '600',
+    marginBottom: Spacing.sm,
+  },
   galleryImage: {
-    width: '100%',
     height: 200,
     borderRadius: Radius.lg,
     backgroundColor: colors.illustration,
@@ -399,9 +404,9 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     backgroundColor: colors.illustration,
   },
   coverFallbackText: {
-    color: colors.textPlaceholder,
+    color: colors.textSecondary,
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: '700',
     textAlign: 'center',
     padding: Spacing.lg,
   },
@@ -411,9 +416,9 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     backgroundColor: colors.illustration,
   },
   galleryFallbackText: {
-    color: colors.textPlaceholder,
+    color: colors.textSecondary,
     fontSize: 12,
-    fontWeight: '600',
+    fontWeight: '700',
     textAlign: 'center',
   },
   sidebar: {
