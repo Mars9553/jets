@@ -1,4 +1,4 @@
-import React, { memo, useRef, useCallback } from 'react';
+import React, { memo, useRef, useCallback, useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions, Animated } from 'react-native';
 import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
@@ -8,7 +8,6 @@ import { useLikeToggle } from '@/hooks/useLikeToggle';
 import { EventItem } from '@/lib/api';
 import { getStatusLabel } from '@/data/events';
 import { Radius, Shadow, Spacing } from '@/constants/theme';
-
 import { useTheme } from '@/context/ThemeContext';
 
 type EventCardProps = {
@@ -23,6 +22,7 @@ export const EventCard = memo(function EventCard({ event, compact = false }: Eve
   const { colors } = useTheme();
   const s = styles(colors);
   const scaleAnim = useRef(new Animated.Value(1)).current;
+  const [imageError, setImageError] = useState(false);
 
   const handleMouseEnter = useCallback(() => {
     Animated.spring(scaleAnim, { toValue: 1.02, useNativeDriver: true }).start();
@@ -40,6 +40,8 @@ export const EventCard = memo(function EventCard({ event, compact = false }: Eve
     liked: event.liked ?? false,
   });
 
+  const showImage = event.image && !imageError;
+
   return (
     <Animated.View
       style={[
@@ -52,12 +54,18 @@ export const EventCard = memo(function EventCard({ event, compact = false }: Eve
       onMouseLeave={handleMouseLeave}
       {...({ onMouseEnter: handleMouseEnter, onMouseLeave: handleMouseLeave } as any)}
     >
-      <Image
-        source={{ uri: event.image }}
-        style={[s.image, compact && s.imageCompact]}
-        contentFit="cover"
-        transition={200}
-      />
+      {showImage ? (
+        <Image
+          source={{ uri: event.image }}
+          style={[s.image, compact && s.imageCompact]}
+          contentFit="cover"
+          onError={() => setImageError(true)}
+        />
+      ) : (
+        <View style={[s.image, compact && s.imageCompact, s.imageFallback]}>
+          <Text style={s.imageFallbackText}>{event.title}</Text>
+        </View>
+      )}
 
       <View style={s.body}>
         <View style={[s.statusBadge, { backgroundColor: isPast ? colors.inputBg : colors.primaryLight }]}>
@@ -123,10 +131,23 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
   image: {
     width: '100%',
     height: 160,
+    borderRadius: Radius.lg,
     backgroundColor: colors.illustration,
+    position: 'relative',
   },
   imageCompact: {
     height: 130,
+  },
+  imageFallback: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: Spacing.md,
+  },
+  imageFallbackText: {
+    color: colors.textPlaceholder,
+    fontSize: 13,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   body: {
     padding: Spacing.md,

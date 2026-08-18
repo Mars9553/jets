@@ -75,6 +75,8 @@ export default function EventDetailScreen() {
 
   const s = styles(colors);
 
+  const [imageError, setImageError] = useState(false);
+
   if (loading) {
     return (
       <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
@@ -101,6 +103,28 @@ export default function EventDetailScreen() {
   const statusLabel = getStatusLabel(event.status);
   const isPast = event.status === 'past';
 
+  function GalleryImage({ uri, onPress }: { uri: string; onPress: () => void }) {
+    const [error, setError] = useState(false);
+    if (error) {
+      return (
+        <View style={[s.galleryImage, isWide && s.galleryImageWide, s.galleryImageFallback]}>
+          <Text style={s.galleryFallbackText}>Image unavailable</Text>
+        </View>
+      );
+    }
+    return (
+      <Pressable onPress={onPress} style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }, isWide ? s.galleryImageWide : s.galleryImage]}>
+        <Image
+          source={{ uri }}
+          style={[s.galleryImage, isWide && s.galleryImageWide]}
+          contentFit="cover"
+          pointerEvents="none"
+          onError={() => setError(true)}
+        />
+      </Pressable>
+    );
+  }
+
   return (
     <SafeAreaView style={[s.container, { backgroundColor: colors.background }]}>
       <StatusBar barStyle={resolvedTheme === 'dark' ? 'light-content' : 'dark-content'} backgroundColor={colors.surface} />
@@ -113,15 +137,15 @@ export default function EventDetailScreen() {
             <Text style={[s.backLink, { color: colors.primary }]}>Back to events</Text>
           </TouchableOpacity>
 
-          {event.image ? (
+          {event.image && !imageError ? (
             <Pressable onPress={() => setSelectedImage(event.image)} style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}>
               <View style={s.coverWrap}>
                 <Image
                   source={{ uri: event.image }}
                   style={s.coverImage}
                   contentFit="cover"
-                  transition={200}
                   pointerEvents="none"
+                  onError={() => setImageError(true)}
                 />
                 <View style={[s.coverOverlay, { backgroundColor: colors.overlay }]} pointerEvents="none" />
                 <View style={s.coverContent} pointerEvents="none">
@@ -133,7 +157,9 @@ export default function EventDetailScreen() {
               </View>
             </Pressable>
           ) : (
-            <Text style={[s.title, { color: colors.text }]}>{event.title}</Text>
+            <View style={[s.coverWrap, s.coverFallback]}>
+              <Text style={s.coverFallbackText}>{event.title}</Text>
+            </View>
           )}
 
           {!event.image && (
@@ -154,15 +180,13 @@ export default function EventDetailScreen() {
             <View style={[s.gallery, isWide && s.galleryWide]}>
               <View style={[s.galleryRow, isWide && s.galleryRowWide]}>
                 {(event.gallery ?? []).map((uri) => (
-                  <Pressable key={uri} onPress={() => setSelectedImage(uri)} style={({ pressed }) => [{ opacity: pressed ? 0.85 : 1 }]}>
-                    <Image
-                      source={{ uri }}
-                      style={[s.galleryImage, isWide && s.galleryImageWide]}
-                      contentFit="cover"
-                      transition={200}
-                      pointerEvents="none"
-                    />
-                  </Pressable>
+                  <GalleryImage
+                    key={uri}
+                    uri={uri}
+                    isWide={isWide}
+                    colors={colors}
+                    onPress={() => setSelectedImage(uri)}
+                  />
                 ))}
               </View>
             </View>
@@ -254,7 +278,6 @@ export default function EventDetailScreen() {
               source={{ uri: selectedImage }}
               style={s.imageModalImage}
               contentFit="contain"
-              transition={200}
               pointerEvents="none"
             />
           </View>
@@ -369,6 +392,29 @@ const styles = (colors: ReturnType<typeof useTheme>['colors']) => StyleSheet.cre
     flex: 1,
     height: 220,
     position: 'relative',
+  },
+  coverFallback: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.illustration,
+  },
+  coverFallbackText: {
+    color: colors.textPlaceholder,
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+    padding: Spacing.lg,
+  },
+  galleryImageFallback: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: colors.illustration,
+  },
+  galleryFallbackText: {
+    color: colors.textPlaceholder,
+    fontSize: 12,
+    fontWeight: '600',
+    textAlign: 'center',
   },
   sidebar: {
     borderRadius: Radius.lg,
